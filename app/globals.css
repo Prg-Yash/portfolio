@@ -1,26 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-mono: 'IBM Plex Mono', var(--font-ibm-plex-mono), monospace;
+  --font-serif: 'ivypresto-display', 'IvyPresto Display', var(--font-cormorant), var(--font-playfair), serif;
+  --font-sans: var(--font-inter), sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Custom typography helper classes with high priority */
+.font-serif {
+  font-family: 'ivypresto-display', 'IvyPresto Display', var(--font-cormorant), var(--font-playfair), serif !important;
 }
 
-@media (prefers-color-scheme: dark) {
+.font-serif-italic {
+  font-family: 'ivypresto-display', 'IvyPresto Display', var(--font-cormorant), var(--font-playfair), serif !important;
+  font-style: italic !important;
+}
+
+.font-mono {
+  font-family: 'IBM Plex Mono', var(--font-ibm-plex-mono), monospace !important;
+}
+
+.font-sans {
+  font-family: var(--font-inter), sans-serif !important;
+}
+
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1d1d1d;
+    --foreground: #f5f0e8;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-inter), sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* Hide default scrollbars for immersive planetarium feel */
+  ::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    background: transparent;
+  }
+
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  /* Text selection styling */
+  ::selection {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(0%);
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: translateY(360px);
+    opacity: 0.8;
+  }
+}
+
+.animate-scanline {
+  animation: scanline 3s linear infinite;
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 12s linear infinite;
+}
+
+/* 100% GPU-Accelerated Cinematic Camera Breathing (Visibly Noticeable & Hypnotic) */
+@keyframes cameraBreatheBg {
+  0%, 100% {
+    transform: translate3d(0px, 0px, 0px) scale(1.05) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(-12px, -8px, 0px) scale(1.08) rotate(-0.3deg);
+  }
+}
+
+.animate-camera-breathe-bg {
+  animation: cameraBreatheBg 7s ease-in-out infinite !important;
+}
+
+@keyframes cameraBreatheContent {
+  0%, 100% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  50% {
+    transform: translate3d(8px, -5px, 0px);
+  }
+}
+
+.animate-camera-breathe-content {
+  animation: cameraBreatheContent 5s ease-in-out infinite !important;
 }
