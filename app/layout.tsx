@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Playfair_Display, IBM_Plex_Mono, Cormorant_Garamond, JetBrains_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { SoulProvider } from "./context/SoulContext";
+import { LenisScrollProvider } from "./components/ui/LenisScrollProvider";
 import { SITE_CONTENT } from "./data/content";
+
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -59,7 +61,9 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-full flex flex-col selection:bg-white/20 selection:text-white"
       >
-        <SoulProvider>{children}</SoulProvider>
+        <LenisScrollProvider>
+          <SoulProvider>{children}</SoulProvider>
+        </LenisScrollProvider>
       </body>
     </html>
   );

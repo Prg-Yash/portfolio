@@ -50,7 +50,7 @@ export const SectionIndicator: React.FC = () => {
         </span>
         <span className="text-white/30">/</span>
         <span className="text-white/80 font-medium tracking-[0.25em]">
-          {displayStage.name}
+          {displayStage.name} <span className="text-[#ffc490] font-bold ml-1">{displayStage.label}</span>
         </span>
       </div>
     </div>

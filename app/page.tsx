@@ -53,13 +53,13 @@ export default function Home() {
       <div className="relative z-20 w-full block">
         <Stage01Void />
         <Stage02Awakening />
-        {/* <Stage03Curiosity />
+        <Stage03Curiosity />
         <Stage04Learning />
         <Stage05Creation />
         <Stage06Failure />
-        <Stage07Transform />
-        <Stage08Wisdom />
-        <Stage09Legacy /> */}
+        {/* <Stage07Transform />
+        <Stage08Wisdom />*/}
+        <Stage09Legacy />
       </div>
     </main>
   );

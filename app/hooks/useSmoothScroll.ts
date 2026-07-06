@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, RefObject } from "react";
-import Lenis from "lenis";
+import { useEffect, RefObject } from "react";
+import { useLenis } from "lenis/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useSoul } from "../context/SoulContext";
@@ -10,10 +10,9 @@ import { SITE_CONTENT } from "../data/content";
 gsap.registerPlugin(ScrollTrigger);
 
 export const useSmoothScroll = (mainRef: RefObject<HTMLElement | null>) => {
-  const lenisRef = useRef<Lenis | null>(null);
+  const lenis = useLenis();
   const {
     isLoaded,
-    setScrollProgress,
     setActiveStageIndex,
     setCursorColor,
     registerScrollToStage,
@@ -22,52 +21,21 @@ export const useSmoothScroll = (mainRef: RefObject<HTMLElement | null>) => {
   useEffect(() => {
     if (!isLoaded) return;
 
-    // 1. Initialize Lenis Smooth Scroll
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-    });
-    lenisRef.current = lenis;
-
-    // Connect Lenis to GSAP ScrollTrigger
-    lenis.on("scroll", ScrollTrigger.update);
-
-    const tickerCallback = (time: number) => {
-      lenis.raf(time * 1000);
-    };
-
-    gsap.ticker.add(tickerCallback);
-    gsap.ticker.lagSmoothing(0, 0);
-
-    // 2. Register Scroll-to-Stage Function in Context
+    // 1. Register Scroll-to-Stage Function using the global Lenis root instance
     registerScrollToStage((stageIndex: number) => {
       const targetEl = document.getElementById(`stage-${stageIndex}`);
-      if (targetEl && lenisRef.current) {
-        lenisRef.current.scrollTo(targetEl, {
+      if (targetEl && lenis) {
+        lenis.scrollTo(targetEl, {
           duration: 1.5,
-          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           offset: 0,
         });
+      } else if (targetEl) {
+        targetEl.scrollIntoView({ behavior: "smooth" });
       }
     });
 
-    // 3. Track Overall Scroll Progress (Commented out setScrollProgress to prevent global re-renders on every scroll pixel)
-    const mainEl = mainRef.current;
-    if (mainEl) {
-      ScrollTrigger.create({
-        trigger: mainEl,
-        start: "top top",
-        end: "bottom bottom",
-        onUpdate: (self) => {
-          // setScrollProgress(self.progress);
-        },
-      });
-    }
-
-    // 4. Track Active Stage and Update Color Accent
+    // 2. Track Active Stage and Update Color Accent
     SITE_CONTENT.stages.forEach((stage, idx) => {
       const stageEl = document.getElementById(`stage-${idx}`);
       if (!stageEl) return;
@@ -87,7 +55,7 @@ export const useSmoothScroll = (mainRef: RefObject<HTMLElement | null>) => {
       });
     });
 
-    // Sort and refresh ScrollTriggers after DOM and fonts settle
+    // 3. Sort and refresh ScrollTriggers after DOM and fonts settle
     const handleRefresh = () => {
       ScrollTrigger.sort();
       ScrollTrigger.refresh();
@@ -103,11 +71,9 @@ export const useSmoothScroll = (mainRef: RefObject<HTMLElement | null>) => {
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
-      gsap.ticker.remove(tickerCallback);
-      lenis.destroy();
       ScrollTrigger.getAll().forEach((st) => st.kill());
     };
-  }, [isLoaded, mainRef, registerScrollToStage, setActiveStageIndex, setCursorColor, setScrollProgress]);
+  }, [isLoaded, lenis, registerScrollToStage, setActiveStageIndex, setCursorColor]);
 
-  return lenisRef;
+  return lenis;
 };

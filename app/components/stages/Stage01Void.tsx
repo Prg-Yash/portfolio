@@ -4,14 +4,14 @@ import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useSoul } from "../../context/SoulContext";
-import { useGSAPTimeline } from "../../hooks/useGSAPTimeline";
 import { HyperText } from "../ui/HyperText";
 
 const ROLES = [
   "SOFTWARE DEVELOPER",
-  "FOUNDER & ARCHITECT",
-  "CREATIVE FREELANCER",
+  "A FOUNDER",
   "PROBLEM SOLVER",
+  "AI ENGINEER",
+  "ENTREPRENEUR",
 ];
 
 export const Stage01Void: React.FC = () => {
@@ -23,60 +23,36 @@ export const Stage01Void: React.FC = () => {
 
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
 
-  // 1. Initial Hero 3D Character Reveal on Load & Scroll Out
-  useGSAPTimeline(
-    { trigger: sectionRef, start: "top top", end: "bottom top", scrub: true },
-    (tl) => {
-      const title = titleRef.current;
-      if (!title || !isLoaded) return;
+  // 1. Initial Hero 3D Character Reveal on Load
+  useEffect(() => {
+    const title = titleRef.current;
+    if (!title || !isLoaded) return;
 
-      const letters = title.querySelectorAll(".hero-char");
-      gsap.fromTo(
-        letters,
-        {
-          opacity: 0,
-          rotateX: -90,
-          rotateY: 25,
-          z: -180,
-          scale: 1.3,
-          filter: "blur(12px)",
-        },
-        {
-          opacity: 1,
-          rotateX: 0,
-          rotateY: 0,
-          z: 0,
-          scale: 1,
-          filter: "blur(0px)",
-          stagger: 0.045,
-          duration: 1.8,
-          ease: "expo.out",
-          delay: 0.2,
-        }
-      );
-
-      // On scroll down, letters gracefully blur out and elevate into 3D space
-      tl.to(letters, {
+    const letters = title.querySelectorAll(".hero-char");
+    gsap.fromTo(
+      letters,
+      {
         opacity: 0,
-        z: 250,
-        rotateX: 60,
-        filter: "blur(15px)",
-        stagger: 0.02,
-        ease: "power2.inOut",
-      })
-        .to(
-          roleRef.current,
-          { opacity: 0, y: -40, filter: "blur(10px)", ease: "power2.out" },
-          "<"
-        )
-        .to(
-          sublineRef.current,
-          { opacity: 0, y: -60, filter: "blur(10px)", ease: "power2.out" },
-          "<"
-        );
-    },
-    [isLoaded]
-  );
+        rotateX: -90,
+        rotateY: 25,
+        z: -180,
+        scale: 1.3,
+        filter: "blur(12px)",
+      },
+      {
+        opacity: 1,
+        rotateX: 0,
+        rotateY: 0,
+        z: 0,
+        scale: 1,
+        filter: "blur(0px)",
+        stagger: 0.045,
+        duration: 1.8,
+        ease: "expo.out",
+        delay: 0.2,
+      }
+    );
+  }, [isLoaded]);
 
   // 2. Magic UI HyperText Scramble Rotator
   useEffect(() => {

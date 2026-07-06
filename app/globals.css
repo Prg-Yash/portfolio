@@ -31,12 +31,21 @@
     --foreground: #f5f0e8;
   }
 
+  /* Lenis root mode requires html to be scrollable (not overflow:hidden) */
+  html {
+    overflow-x: hidden;
+    /* Prevents scroll-behavior:smooth from fighting Lenis */
+    scroll-behavior: auto !important;
+  }
+
   body {
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-inter), sans-serif;
-    overflow-x: hidden;
+    /* Do NOT set overflow:hidden on body — Lenis needs native scroll events */
     cursor: default;
+    /* GPU hint for fixed/sticky compositing */
+    -webkit-font-smoothing: antialiased;
   }
 
   /* Hide default scrollbars for immersive planetarium feel */

@@ -20,6 +20,10 @@ export interface Skill {
   orbitSpeed: number;
 }
 
+export type MilestoneType = "education" | "win" | "hackathon" | "internship" | "venture" | "leadership" | "achievement";
+export type MilestoneEra = "GENESIS" | "MOMENTUM" | "LEADERSHIP" | "ASCENDANCE";
+export type MilestoneTrack = "left" | "right";
+
 export interface TimelineMilestone {
   year: string;
   title: string;
@@ -27,6 +31,10 @@ export interface TimelineMilestone {
   location: string;
   description: string;
   highlight: string;
+  type: MilestoneType;
+  era: MilestoneEra;
+  track: MilestoneTrack;
+  badge: string; // emoji icon
 }
 
 export interface Testimonial {
@@ -40,8 +48,10 @@ export interface StageConfig {
   id: string;
   number: string;
   name: string;
+  label: string; // Practical portfolio tag e.g. "[ SKILLS ]", "[ PROJECTS ]"
   title: string;
   accentColor: string; // Hex color for soul particle & glow
+  enabled?: boolean; // If false, stage is hidden from navigation bar & timeline
   particleState: {
     count: number;
     speed: number;
@@ -56,78 +66,96 @@ export const SITE_CONTENT = {
     description: "An immersive scroll-driven narrative experience exploring the metaphorical evolution of a creative developer's soul.",
     author: "Creative Technologist",
   },
-  
+
   stages: [
     {
       id: "void",
       number: "01",
       name: "VOID",
+      label: "[ INTRO ]",
       title: "In the Beginning, Absence",
       accentColor: "#f5f0e8",
+      enabled: true,
       particleState: { count: 1, speed: 0.2, dispersion: 0.05, color: "#f5f0e8" }
     },
     {
       id: "awakening",
       number: "02",
       name: "AWAKENING",
+      label: "[ ABOUT ]",
       title: "Consciousness Taking Form",
       accentColor: "#ffc490",
+      enabled: true,
       particleState: { count: 1800, speed: 0.5, dispersion: 0.3, color: "#ffc490" }
     },
     {
       id: "curiosity",
       number: "03",
       name: "CURIOSITY",
+      label: "[ SKILLS ]",
       title: "Reaching Outward into the Unknown",
       accentColor: "#ffc490",
+      enabled: true,
       particleState: { count: 2200, speed: 1.2, dispersion: 0.8, color: "#ffc490" }
     },
     {
       id: "learning",
       number: "04",
       name: "LEARNING",
+      label: "[ EXPERIENCE ]",
       title: "Tracing the Constellations of Growth",
       accentColor: "#ffc490",
+      enabled: true,
       particleState: { count: 2000, speed: 0.8, dispersion: 0.5, color: "#ffc490" }
     },
     {
       id: "creation",
       number: "05",
       name: "CREATION",
+      label: "[ PROJECTS ]",
       title: "Synthesizing Light into Structure",
       accentColor: "#ffd890",
+      enabled: true,
       particleState: { count: 2800, speed: 1.5, dispersion: 1.0, color: "#ffc870" }
     },
     {
       id: "failure",
       number: "06",
       name: "FAILURE",
+      label: "[ RESILIENCE ]",
       title: "The Dissolution of Certainty",
       accentColor: "#ff6060",
+      enabled: true,
       particleState: { count: 1500, speed: 2.0, dispersion: 2.5, color: "#d05050" }
     },
     {
       id: "transformation",
       number: "07",
       name: "TRANSFORMATION",
+      label: "[ PHILOSOPHY ]",
       title: "Reassembling from the Ashes",
       accentColor: "#d4a5ff",
+      enabled: false,
       particleState: { count: 2200, speed: 1.0, dispersion: 0.6, color: "#c080ff" }
     },
     {
       id: "wisdom",
       number: "08",
       name: "WISDOM",
+      label: "[ TESTIMONIALS ]",
       title: "The Serenity of Equilibrium",
       accentColor: "#ffc490",
+      enabled: false,
       particleState: { count: 2400, speed: 0.3, dispersion: 0.2, color: "#ffc490" }
     },
     {
       id: "legacy",
       number: "09",
       name: "LEGACY",
+      label: "[ CONTACT ]",
       title: "Returning to the Infinite",
       accentColor: "#f5f0e8",
+      enabled: true,
       particleState: { count: 100, speed: 0.1, dispersion: 0.1, color: "#ffffff" }
     }
   ] as StageConfig[],
@@ -140,8 +168,8 @@ export const SITE_CONTENT = {
   },
 
   about: {
-    statement: "I am a creative technologist and front-end architect dedicated to crafting digital experiences that transcend mere utility. I believe code is a medium for emotional resonance—bridging the gap between mathematical precision and human intuition.",
-    subText: "With over 8 years of experience building Awwwards-tier web applications, generative art installations, and real-time 3D environments, my work explores the intersection of kinetic typography, shader programming, and responsive storytelling."
+    statement: " I'm Yash Nimse, a third-year Computer Engineering student who enjoys turning ambitious ideas into real products. Whether it's building scalable web applications, AI-powered systems, or SaaS platforms, I'm driven by the challenge of solving meaningful problems through technology. Over the past few years, I've worked with startups, clients, and my own products, gaining experience across full-stack development, AI, and product design. From hackathon-winning solutions to freelance projects, every experience has helped shape the way I think, build, and grow. For me, development isn't just about writing code, it's about creating experiences, designing systems that scale, and building products that people genuinely enjoy using.",
+    subText: ""
   },
 
   skills: [
@@ -156,37 +184,225 @@ export const SITE_CONTENT = {
   ] as Skill[],
 
   timeline: [
+    // ── GENESIS (2022–2023) ───────────────────────────────────────────────────
     {
-      year: "2024 — PRESENT",
-      title: "Principal Creative Technologist",
-      organization: "Noctra Studio",
-      location: "Remote / New York",
-      description: "Leading the interactive engineering team in crafting award-winning WebGL web experiences and immersive brand ecosystems for luxury and tech clients.",
-      highlight: "2x Awwwards Site of the Month, 5x FWA of the Day"
+      year: "2022 – 2025",
+      title: "Diploma in Computer Engineering",
+      organization: "Vidyalankar Polytechnic",
+      location: "Mumbai, India",
+      description: "Three-year full-time diploma in Computer Engineering, building core foundations in programming, data structures, operating systems, and software engineering.",
+      highlight: "Graduated as Department Topper — CO Branch, 1st Year",
+      type: "education", era: "GENESIS", track: "left", badge: "🎓"
     },
     {
-      year: "2021 — 2024",
-      title: "Senior Front-End Architect",
-      organization: "Ethereal Interactive",
-      location: "San Francisco, CA",
-      description: "Architected real-time 3D web applications and scroll-driven design systems. Specialized in Three.js shader optimization and GSAP timeline synchronization.",
-      highlight: "Reduced 3D bundle load times by 45% while maintaining 60fps across mobile viewports"
+      year: "2022",
+      title: "First Programming Languages: C & C++",
+      organization: "Self-taught",
+      location: "Mumbai",
+      description: "Wrote my first lines of code — mastering procedural logic, pointers, memory management, and object-oriented principles with C and C++.",
+      highlight: "Spark that ignited everything — the first program that actually ran",
+      type: "education", era: "GENESIS", track: "left", badge: "⚡"
     },
     {
-      year: "2019 — 2021",
-      title: "Creative Developer",
-      organization: "Vortex Digital Arts",
-      location: "London, UK",
-      description: "Developed interactive gallery exhibitions and experimental web experiences using Canvas 2D, WebGL, and custom particle engines.",
-      highlight: "Featured in Webby Awards 2020 for Experimental & Weird"
+      year: "2023",
+      title: "Web Development: HTML, CSS, JavaScript",
+      organization: "Self-taught",
+      location: "Mumbai",
+      description: "Dove into the web — mastered HTML semantics, CSS layouts, vanilla JavaScript, and quickly expanded into React, Next.js, Tailwind CSS, and modern frameworks.",
+      highlight: "Built first full client websites within months of learning",
+      type: "education", era: "GENESIS", track: "left", badge: "🌐"
     },
     {
-      year: "2017 — 2019",
-      title: "UI/UX Engineer & Designer",
-      organization: "Freelance",
+      year: "2023",
+      title: "TechSpardha — First Competition Win",
+      organization: "Vidyalankar Polytechnic",
+      location: "Mumbai",
+      description: "Won in 2 categories at TechSpardha, a prestigious tech project competition organized by Vidyalankar Polytechnic. First taste of competing — and winning — at the institutional level.",
+      highlight: "Won in 2 categories — first competitive achievement in tech",
+      type: "win", era: "GENESIS", track: "right", badge: "🏆"
+    },
+    {
+      year: "2023",
+      title: "First DSA Competition Win",
+      organization: "VP Techshala",
+      location: "Mumbai",
+      description: "Won a Data Structures & Algorithms competition organized by VP Techshala, proving early aptitude for algorithmic problem-solving under time pressure.",
+      highlight: "Winner — proof that logic and speed were becoming second nature",
+      type: "win", era: "GENESIS", track: "right", badge: "🧠"
+    },
+    {
+      year: "2023",
+      title: "Topper — CO Department, 1st Year",
+      organization: "Vidyalankar Polytechnic",
+      location: "Mumbai",
+      description: "Ranked as the top student in the Computer Engineering department (CO) for the first year of diploma, balancing academics with self-driven technical projects.",
+      highlight: "Department Topper — academics and passion in parallel",
+      type: "achievement", era: "GENESIS", track: "left", badge: "🥇"
+    },
+    {
+      year: "Aug – Dec 2023",
+      title: "WordPress Developer — First Internship",
+      organization: "Unscrap Media",
+      location: "Vashi, Mumbai",
+      description: "First professional internship — built and deployed WordPress websites for real clients, learning production workflows, client communication, and web publishing at scale.",
+      highlight: "First professional experience — went from student to developer",
+      type: "internship", era: "GENESIS", track: "left", badge: "💼"
+    },
+    // ── MOMENTUM (2024) ──────────────────────────────────────────────────────
+    {
+      year: "2024",
+      title: "Technothon 24 — State Level Hackathon Winner",
+      organization: "VES Polytechnic, Chembur",
+      location: "Mumbai",
+      description: "Won first state-level hackathon, Technothon 24, organized by VES Polytechnic. Competed against teams from across Maharashtra and secured 1st place with a high-impact technical solution.",
+      highlight: "1st Place — First state-level hackathon win",
+      type: "hackathon", era: "MOMENTUM", track: "right", badge: "🚀"
+    },
+    {
+      year: "2024",
+      title: "Recursion 5.0 — Hackathon Winner",
+      organization: "RGIT, Andheri",
+      location: "Mumbai",
+      description: "Won Recursion 5.0 hackathon organized by RGIT, Andheri. Delivered a full working prototype under intense time constraints, earning first place against strong competition from degree-level engineering students.",
+      highlight: "1st Place — Won against degree-level engineers as a diploma student",
+      type: "hackathon", era: "MOMENTUM", track: "right", badge: "⚡"
+    },
+    {
+      year: "2024",
+      title: "VP Internal Hackathon Winner",
+      organization: "Vidyalankar Polytechnic",
+      location: "Mumbai",
+      description: "Won the internal institutional hackathon at Vidyalankar Polytechnic — 3rd hackathon win in 2024, demonstrating consistent ability to execute under pressure and deliver production-grade solutions.",
+      highlight: "1st Place — 3rd hackathon win in a single year",
+      type: "hackathon", era: "MOMENTUM", track: "right", badge: "🏆"
+    },
+    {
+      year: "2024",
+      title: "TechSpardha — Second Win",
+      organization: "Vidyalankar Polytechnic",
+      location: "Mumbai",
+      description: "Won TechSpardha again, the prestigious tech project competition by Vidyalankar Polytechnic — a second consecutive win that cemented a reputation for delivering outstanding technical projects.",
+      highlight: "Back-to-back TechSpardha champion",
+      type: "win", era: "MOMENTUM", track: "right", badge: "🏅"
+    },
+    {
+      year: "2024",
+      title: "2nd Place — DSA Competition",
+      organization: "Vidyalankar Institute of Technology",
+      location: "Mumbai",
+      description: "Placed 2nd in a Data Structures & Algorithms competition at VIT, demonstrating continued algorithmic sharpness while simultaneously winning hackathons in the same period.",
+      highlight: "2nd Place at VIT — consistent competitor across multiple disciplines",
+      type: "win", era: "MOMENTUM", track: "right", badge: "🧩"
+    },
+    {
+      year: "Mar – Jun 2024",
+      title: "Content & Design Team — IEEE Bombay Section",
+      organization: "IEEE Bombay Section (SAAC)",
+      location: "Mumbai",
+      description: "Joined the Student Activities Advisory Committee (SAAC) of IEEE Bombay Section as a Content and Design team member — contributing to one of India's most active engineering chapters.",
+      highlight: "Joined IEEE — contributing to India's premier engineering community",
+      type: "achievement", era: "MOMENTUM", track: "left", badge: "🔬"
+    },
+    {
+      year: "Jun – Jul 2024",
+      title: "Web Developer — Second Internship",
+      organization: "Hertzsoft Technologies",
+      location: "Mumbai",
+      description: "2nd internship as a professional Web Developer at Hertzsoft Technologies — built client web applications using modern stacks, gaining real-world industry experience in product delivery and client management.",
+      highlight: "Promoted from WordPress Dev to Full-Stack Web Developer",
+      type: "internship", era: "MOMENTUM", track: "left", badge: "💻"
+    },
+    {
+      year: "2024 – 2025",
+      title: "App Development Head",
+      organization: "VP Techshala",
+      location: "Vidyalankar Polytechnic, Mumbai",
+      description: "Appointed as App Development Head at VP Techshala — the student technical body. Led the app development vertical, organizing events, mentoring juniors, and driving technical culture in the institution.",
+      highlight: "Led the app development vertical at institutional student body",
+      type: "leadership", era: "MOMENTUM", track: "left", badge: "👑"
+    },
+    // ── LEADERSHIP (2025) ─────────────────────────────────────────────────────
+    {
+      year: "2025",
+      title: "Taught 60+ Students — 3+ Events",
+      organization: "VP Techshala",
+      location: "Vidyalankar Polytechnic, Mumbai",
+      description: "Conducted 3+ app development events and competitions, directly teaching and mentoring 60+ students in mobile development, cross-platform frameworks, and modern app architecture.",
+      highlight: "60+ students mentored — the first time I gave back what I learned",
+      type: "leadership", era: "LEADERSHIP", track: "left", badge: "📚"
+    },
+    {
+      year: "2025",
+      title: "DiPEx 2025 — State Level Exhibition Shortlist",
+      organization: "Maharashtra & Goa State Competition",
+      location: "Maharashtra",
+      description: "Shortlisted for DiPEx 2025, the prestigious state-level diploma project exhibition for Maharashtra and Goa. Presented a SaaS solution over 3 days in a competitive technical exhibition setting.",
+      highlight: "Selected for state-level SaaS exhibition — 3-day product showcase",
+      type: "win", era: "LEADERSHIP", track: "right", badge: "🌟"
+    },
+    {
+      year: "2025",
+      title: "OdooxSPIT — National Hackathon, 1st Runner-Up",
+      organization: "Odoo × SPIT",
+      location: "Mumbai",
+      description: "Won 1st Runner-Up in OdooxSPIT, a national-level hackathon organized by Odoo and SPIT. Competed against the country's best engineering teams with a live technical solution built under pressure.",
+      highlight: "National 1st Runner-Up — first national podium finish",
+      type: "hackathon", era: "LEADERSHIP", track: "right", badge: "🥈"
+    },
+    {
+      year: "2025 – Present",
+      title: "Started Freelancing",
+      organization: "Independent",
+      location: "Global Remote",
+      description: "Launched independent freelancing — taking on full-stack development, AI integration, and product design projects for clients across sectors. Every project a new challenge, a new domain.",
+      highlight: "First paying projects as a solo professional",
+      type: "venture", era: "LEADERSHIP", track: "left", badge: "🌍"
+    },
+    {
+      year: "2025 – Present",
+      title: "Co-founded DevAlly",
+      organization: "DevAlly",
+      location: "Mumbai / Remote",
+      description: "Co-founded DevAlly, a digital agency offering full-stack development, AI solutions, and design services to businesses and startups. From solo developer to agency founder.",
+      highlight: "From developer to founder — built a team, built a brand",
+      type: "venture", era: "LEADERSHIP", track: "left", badge: "🚀"
+    },
+    {
+      year: "2025 – Present",
+      title: "25+ Clients Served",
+      organization: "DevAlly & Freelance",
       location: "Global",
-      description: "Bridged the gap between visual design and technical implementation, mastering typography, motion physics, and clean responsive code.",
-      highlight: "Built over 30 bespoke client websites with focus on micro-interactions"
+      description: "Delivered projects for 25+ clients spanning startups, local businesses, e-commerce brands, and SaaS products — across web development, mobile apps, and AI automation.",
+      highlight: "25+ clients — real products solving real problems",
+      type: "venture", era: "LEADERSHIP", track: "left", badge: "🤝"
+    },
+    {
+      year: "2025 – Present",
+      title: "B.E. Computer Engineering — SIES GST",
+      organization: "SIES Graduate School of Technology",
+      location: "Nerul, Navi Mumbai",
+      description: "Completed diploma and directly admitted to B.E. Computer Engineering at SIES Graduate School of Technology — balancing advanced academics with freelancing, agency operations, and competitive achievements.",
+      highlight: "Diploma to B.E. — never stopped building while learning",
+      type: "education", era: "LEADERSHIP", track: "left", badge: "🎓"
+    },
+    // ── ASCENDANCE (2026) ────────────────────────────────────────────────────
+    {
+      year: "2026",
+      title: "Technions — National Online Hackathon Winner",
+      organization: "Technions (Powered by ElevenLabs)",
+      location: "National (Online)",
+      description: "Won Technions, a national-level online hackathon powered by ElevenLabs. Built and deployed an AI-powered solution leveraging cutting-edge voice AI technology against top engineering teams nationwide.",
+      highlight: "National Winner — AI hackathon powered by ElevenLabs",
+      type: "hackathon", era: "ASCENDANCE", track: "right", badge: "🤖"
+    },
+    {
+      year: "2026",
+      title: "Innovations — National Project Competition Winner",
+      organization: "SIES Graduate School of Technology",
+      location: "Nerul, Navi Mumbai",
+      description: "Won Innovations, a national-level project competition organized by SIES Graduate School of Technology — presenting a breakthrough technical project that earned top honors at the national stage.",
+      highlight: "National Winner — back-to-back national victories in 2026",
+      type: "win", era: "ASCENDANCE", track: "right", badge: "🏆"
     }
   ] as TimelineMilestone[],
 

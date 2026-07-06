@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SITE_CONTENT } from "../../data/content";
+import { StardustRiver } from "../ui/StardustRiver";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,30 +12,12 @@ export const Stage02Awakening: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const textRef = useRef<HTMLParagraphElement | null>(null);
   const subRef = useRef<HTMLDivElement | null>(null);
-  const shardsRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
     const textEl = textRef.current;
     const subEl = subRef.current;
-    const shardsEl = shardsRef.current;
     if (!container || !textEl || !subEl) return;
-
-    // Floating background geometric shards animation
-    if (shardsEl) {
-      const shards = shardsEl.querySelectorAll(".shard-piece");
-      shards.forEach((shard, i) => {
-        gsap.to(shard, {
-          y: (i % 2 === 0 ? -1 : 1) * 150,
-          rotateZ: 360,
-          rotateX: 180,
-          duration: 15 + i * 5,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-        });
-      });
-    }
 
     const words = textEl.querySelectorAll(".word-span");
 
@@ -42,7 +25,7 @@ export const Stage02Awakening: React.FC = () => {
       scrollTrigger: {
         trigger: container,
         start: "top top",
-        end: "+=200%",
+        end: "+=280%",
         pin: true,
         pinSpacing: true,
         scrub: 1.2,
@@ -50,42 +33,44 @@ export const Stage02Awakening: React.FC = () => {
       },
     });
 
-    // Kinetic 3D Word Rotation Scrub
+    // Next-Level Light Ignition Word Scrubbing (Optimized for 100+ words)
     tl.fromTo(
       words,
       {
-        opacity: 0.08,
-        rotateX: 75,
-        rotateY: -30,
-        z: -100,
-        scale: 0.8,
-        filter: "blur(8px)",
+        opacity: 0.15,
+        rotateX: 50,
+        rotateY: -15,
+        y: 20,
+        z: -40,
+        scale: 0.95,
+        filter: "blur(5px)",
         color: "#ffffff",
       },
       {
         opacity: 1,
         rotateX: 0,
         rotateY: 0,
+        y: 0,
         z: 0,
         scale: 1,
         filter: "blur(0px)",
         color: "#ffc490",
-        stagger: 0.15,
-        ease: "power3.out",
+        stagger: 0.025,
+        ease: "expo.out",
       }
     ).to(
       words,
       {
         color: "#f5f0e8",
-        stagger: 0.15,
+        stagger: 0.025,
         duration: 0.5,
       },
-      "-=1.0"
+      "-=0.6"
     ).fromTo(
       subEl,
-      { opacity: 0, y: 50, scale: 0.9, filter: "blur(10px)" },
-      { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 2, ease: "expo.out" },
-      "-=2"
+      { opacity: 0, y: 50, scale: 0.95, filter: "blur(10px)" },
+      { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 2.0, ease: "expo.out" },
+      "-=1.2"
     );
 
     return () => {
@@ -95,23 +80,21 @@ export const Stage02Awakening: React.FC = () => {
     };
   }, []);
 
-  const statementWords = SITE_CONTENT.about.statement.split(" ");
+  const statementWords = SITE_CONTENT.about.statement.trim().split(/\s+/);
 
   return (
-    <section
-      ref={containerRef}
-      id="stage-1"
-      className="relative flex min-h-screen w-full flex-col items-center justify-center px-6 py-24 z-20 overflow-hidden bg-gradient-to-b from-transparent via-[#1d1d1d]/90 to-transparent perspective-[1000px]"
+    <>
+      <section
+        ref={containerRef}
+        id="stage-1"
+      className="relative flex min-h-screen w-full flex-col items-center justify-center py-24 z-20 overflow-hidden perspective-[1000px]"
     >
-      {/* Floating Geometric Glass Shards Background */}
-      <div ref={shardsRef} className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="shard-piece absolute top-[15%] left-[10%] h-32 w-32 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-md opacity-30" />
-        <div className="shard-piece absolute top-[70%] left-[80%] h-48 w-48 rounded-full border border-[#ffc490]/20 bg-[#ffc490]/5 backdrop-blur-lg opacity-25" />
-        <div className="shard-piece absolute top-[40%] right-[15%] h-24 w-24 rotate-45 border border-[#d4a5ff]/20 bg-[#d4a5ff]/5 backdrop-blur-sm opacity-20" />
-        <div className="shard-piece absolute bottom-[20%] left-[25%] h-36 w-36 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md opacity-30" />
+      {/* Cinematic Volumetric Light Dawn Aura (No Blurry Shards!) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] sm:w-[1000px] h-[500px] sm:h-[700px] bg-[radial-gradient(ellipse_at_center,rgba(255,196,144,0.12)_0%,rgba(255,196,144,0.03)_45%,transparent_80%)] blur-3xl animate-[pulse_8s_ease-in-out_infinite]" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-4xl text-center sm:text-left">
+      <div className="relative z-10 mx-auto max-w-5xl text-center sm:text-left px-6 sm:px-12">
         {/* Stage Header */}
         <div className="mb-12 flex items-center justify-center sm:justify-start gap-4">
           <span className="font-mono text-xs font-bold tracking-[0.3em] text-[#ffc490] animate-pulse">
@@ -126,13 +109,13 @@ export const Stage02Awakening: React.FC = () => {
         {/* 3D Kinetic Scrubbed Statement */}
         <p
           ref={textRef}
-          className="font-serif-italic text-3xl sm:text-5xl md:text-6xl leading-[1.3] sm:leading-[1.25] tracking-wide text-white select-none"
+          className="font-serif-italic text-2xl sm:text-3xl md:text-4xl lg:text-[2.25rem] leading-[1.5] sm:leading-[1.45] tracking-wide text-white select-none"
           style={{ transformStyle: "preserve-3d" }}
         >
           {statementWords.map((word, idx) => (
             <span
               key={idx}
-              className="word-span inline-block mr-3 sm:mr-4 mb-2 transition-all duration-300 hover:text-[#ffc490] hover:scale-110 cursor-default"
+              className="word-span inline-block mr-2 sm:mr-3 mb-1 sm:mb-2 transition-all duration-300 hover:text-[#ffc490] hover:-translate-y-1 hover:scale-105 hover:drop-shadow-[0_0_15px_rgba(255,196,144,0.8)] cursor-default select-none"
               style={{ transformStyle: "preserve-3d" }}
             >
               {word}
@@ -140,21 +123,91 @@ export const Stage02Awakening: React.FC = () => {
           ))}
         </p>
 
-        {/* Sub-narrative block */}
+        {/* Editorial Stats Row (No Boxed Cards!) */}
         <div
           ref={subRef}
-          className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-8 border-t border-white/10 pt-8 font-mono text-xs sm:text-sm text-white/70 leading-relaxed tracking-wider"
+          className="mt-16 sm:mt-24 grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16 border-t border-white/15 pt-12 sm:pt-16 text-left"
         >
-          <div className="p-6 rounded-2xl border border-white/5 bg-white/5 backdrop-blur-md hover:border-[#ffc490]/30 transition-all">
-            <span className="block font-bold text-[#ffc490] mb-2">ORIGIN PROTOCOL</span>
-            Every creative journey begins in the dark—an unformed spark seeking structure in an expanding digital void.
+          {/* Stat 01 */}
+          <div className="group flex flex-col justify-between">
+            <div>
+              <span className="font-mono text-[11px] tracking-[0.25em] text-[#ffc490]/80 uppercase block mb-3">
+                01 — EXPERIENCE
+              </span>
+              <div className="font-serif-italic text-6xl sm:text-7xl md:text-8xl font-light tracking-tight text-white mb-4 group-hover:text-[#ffc490] transition-colors duration-500 select-none">
+                5+
+              </div>
+              <h3 className="font-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold text-white/90 mb-3">
+                YEARS EXPERIENCE
+              </h3>
+              {/* <p className="font-sans text-xs sm:text-sm text-white/60 leading-relaxed font-light max-w-xs">
+                Crafting scalable web architectures, AI-powered systems, and full-stack digital solutions with engineering precision.
+              </p> */}
+            </div>
           </div>
-          <div className="p-6 rounded-2xl border border-white/5 bg-white/5 backdrop-blur-md hover:border-[#ffc490]/30 transition-all">
-            <span className="block font-bold text-white mb-2">THE MISSION</span>
-            To bridge raw imagination with immaculate engineering, forging interactive digital monuments that endure.
+
+          {/* Stat 02 */}
+          <div className="group flex flex-col justify-between md:border-l md:border-white/10 md:pl-12 sm:pl-16">
+            <div>
+              <span className="font-mono text-[11px] tracking-[0.25em] text-[#ffc490]/80 uppercase block mb-3">
+                02 — TRACK RECORD
+              </span>
+              <div className="font-serif-italic text-6xl sm:text-7xl md:text-8xl font-light tracking-tight text-white mb-4 group-hover:text-[#ffc490] transition-colors duration-500 select-none">
+                25+
+              </div>
+              <h3 className="font-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold text-white/90 mb-3">
+                CLIENT PROJECTS
+              </h3>
+              {/* <p className="font-sans text-xs sm:text-sm text-white/60 leading-relaxed font-light max-w-xs">
+                Delivering bespoke SaaS platforms, high-conversion products, and award-winning experiences for ambitious founders.
+              </p> */}
+            </div>
+          </div>
+
+          {/* Stat 03 */}
+          <div className="group flex flex-col justify-between md:border-l md:border-white/10 md:pl-12 sm:pl-16">
+            <div>
+              <span className="font-mono text-[11px] tracking-[0.25em] text-[#ffc490]/80 uppercase block mb-3">
+                03 — EXCELLENCE
+              </span>
+              <div className="font-serif-italic text-6xl sm:text-7xl md:text-8xl font-light tracking-tight text-white mb-4 group-hover:text-[#ffc490] transition-colors duration-500 select-none">
+                5x
+              </div>
+              <h3 className="font-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold text-white/90 mb-3">
+                HACKATHON WINNER
+              </h3>
+              {/* <p className="font-sans text-xs sm:text-sm text-white/60 leading-relaxed font-light max-w-xs">
+                Proven ability to rapidly innovate, solve complex problems under pressure, and build championship-grade technical prototypes.
+              </p> */}
+            </div>
           </div>
         </div>
+
+        {/* Kinetic Live Telemetry Bar */}
+        {/* <div className="mt-16 sm:mt-20 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] sm:text-xs tracking-[0.25em] text-white/50 uppercase select-none">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ffc490] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ffc490]"></span>
+            </span>
+            <span className="text-white/90 font-bold">STATUS: AWAKENED</span>
+          </div>
+          <div className="hidden sm:flex items-center gap-6">
+            <span>TARGET: 60 FPS PERFORMANCE</span>
+            <span className="text-white/20">|</span>
+            <span>CRAFT: 100% BESPOKE</span>
+          </div>
+          <div className="text-[#ffc490] font-bold">
+            [EST. ETERNAL]
+          </div>
+        </div> */}
       </div>
-    </section>
+      </section>
+
+      {/* Standalone Full-Width Alive Stardust River (Outside Pinned Section to prevent GSAP overlap & lag!) */}
+      <div className="relative z-10 w-full pt-0 pb-8 sm:pb-12 bg-transparent -mt-6 sm:-mt-10">
+        <StardustRiver />
+      </div>
+    </>
   );
 };
