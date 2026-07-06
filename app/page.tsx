@@ -56,7 +56,7 @@ export default function Home() {
         <Stage03Curiosity />
         <Stage04Learning />
         <Stage05Creation />
-        <Stage06Failure />
+        {/* <Stage06Failure /> */}
         {/* <Stage07Transform />
         <Stage08Wisdom />*/}
         <Stage09Legacy />

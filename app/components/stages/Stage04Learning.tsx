@@ -4,26 +4,30 @@ import React, { useEffect, useRef, useMemo } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SITE_CONTENT, TimelineMilestone, MilestoneType, MilestoneEra } from "../../data/content";
+import {
+  GraduationCap, Trophy, Award, Rocket, Terminal, Briefcase,
+  Building2, Users, Sparkles, Globe, Cpu, Layers
+} from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const TYPE_COLOR: Record<MilestoneType, string> = {
-  education:   "#90d5ff",
-  win:         "#ffd890",
-  hackathon:   "#ff9f5a",
-  internship:  "#c8a0ff",
-  venture:     "#ff8080",
-  leadership:  "#a0ffc8",
+  education: "#90d5ff",
+  win: "#ffd890",
+  hackathon: "#ff9f5a",
+  internship: "#c8a0ff",
+  venture: "#ff8080",
+  leadership: "#a0ffc8",
   achievement: "#ffc490",
 };
 
 const TYPE_LABEL: Record<MilestoneType, string> = {
-  education:   "EDUCATION",
-  win:         "WIN",
-  hackathon:   "HACKATHON",
-  internship:  "INTERNSHIP",
-  venture:     "VENTURE",
-  leadership:  "LEADERSHIP",
+  education: "EDUCATION",
+  win: "WIN",
+  hackathon: "HACKATHON",
+  internship: "INTERNSHIP",
+  venture: "VENTURE",
+  leadership: "LEADERSHIP",
   achievement: "ACHIEVEMENT",
 };
 
@@ -31,21 +35,50 @@ const ERA_CONFIG: Record<MilestoneEra, {
   number: string; title: string; years: string;
   subtitle: string; color: string;
 }> = {
-  GENESIS:    { number: "01", title: "GENESIS",    years: "2022 – 2023", subtitle: "First sparks. Curiosity becomes code.",       color: "#90d5ff" },
-  MOMENTUM:   { number: "02", title: "MOMENTUM",   years: "2024",        subtitle: "Velocity. Wins, internships, leadership.",    color: "#ff9f5a" },
-  LEADERSHIP: { number: "03", title: "LEADERSHIP", years: "2025",        subtitle: "Giving back. Founding, teaching, scaling.",  color: "#a0ffc8" },
-  ASCENDANCE: { number: "04", title: "ASCENDANCE", years: "2026",        subtitle: "National stage. The soul at full power.",     color: "#ffd890" },
+  GENESIS: { number: "01", title: "GENESIS", years: "2022 – 2023", subtitle: "First sparks. Curiosity becomes code.", color: "#90d5ff" },
+  MOMENTUM: { number: "02", title: "MOMENTUM", years: "2024", subtitle: "Velocity. Wins, internships, leadership.", color: "#ff9f5a" },
+  LEADERSHIP: { number: "03", title: "LEADERSHIP", years: "2025", subtitle: "Giving back. Founding, teaching, scaling.", color: "#a0ffc8" },
+  ASCENDANCE: { number: "04", title: "ASCENDANCE", years: "2026", subtitle: "National stage. The soul at full power.", color: "#ffd890" },
 };
 
 const ERAS: MilestoneEra[] = ["GENESIS", "MOMENTUM", "LEADERSHIP", "ASCENDANCE"];
 
-// ── Safe bounds accounting for Navigation (top ~52px) and ProgressIndicator (right ~64px) ──
-const SAFE = { top: 60, right: 80, bottom: 32, left: 0 };
+// ── Safe bounds accounting for Navigation (top ~64px), ProgressIndicator (right ~80px), SectionIndicator (bottom ~50px) ──
+const SAFE = { top: 100, right: 80, bottom: 50, left: 60 };
+
+// ── Helper: Map milestone to sleek white Lucide icon ────────────────────────
+const getMilestoneIcon = (item: TimelineMilestone) => {
+  const t = item.title.toLowerCase();
+
+  // Keyword matching for ultra-relevant icons
+  if (t.includes("diploma") || t.includes("b.e.") || t.includes("degree") || t.includes("education")) return <GraduationCap className="w-4 h-4 text-white" />;
+  if (t.includes("programming") || t.includes("c & c++") || t.includes("languages")) return <Terminal className="w-4 h-4 text-white" />;
+  if (t.includes("web dev") || t.includes("html") || t.includes("wordpress") || t.includes("website")) return <Globe className="w-4 h-4 text-white" />;
+  if (t.includes("hackathon") || t.includes("technothon") || t.includes("recursion") || t.includes("odoox")) return <Rocket className="w-4 h-4 text-white" />;
+  if (t.includes("dsa") || t.includes("algorithm") || t.includes("logic")) return <Cpu className="w-4 h-4 text-white" />;
+  if (t.includes("topper") || t.includes("1st place") || t.includes("rank") || t.includes("runner-up")) return <Trophy className="w-4 h-4 text-white" />;
+  if (t.includes("competition") || t.includes("techspardha") || t.includes("dipex")) return <Award className="w-4 h-4 text-white" />;
+  if (t.includes("internship") || t.includes("developer at") || t.includes("freelance") || t.includes("hertzsoft") || t.includes("unscrap") || t.includes("clients")) return <Briefcase className="w-4 h-4 text-white" />;
+  if (t.includes("head") || t.includes("founded") || t.includes("devally") || t.includes("ieee") || t.includes("team") || t.includes("co-founded")) return <Building2 className="w-4 h-4 text-white" />;
+  if (t.includes("taught") || t.includes("students") || t.includes("mentored") || t.includes("teaching")) return <Users className="w-4 h-4 text-white" />;
+
+  // Fallback by type
+  switch (item.type) {
+    case "education": return <GraduationCap className="w-4 h-4 text-white" />;
+    case "hackathon": return <Rocket className="w-4 h-4 text-white" />;
+    case "win": return <Trophy className="w-4 h-4 text-white" />;
+    case "internship": return <Briefcase className="w-4 h-4 text-white" />;
+    case "venture": return <Layers className="w-4 h-4 text-white" />;
+    case "leadership": return <Users className="w-4 h-4 text-white" />;
+    case "achievement": return <Award className="w-4 h-4 text-white" />;
+    default: return <Sparkles className="w-4 h-4 text-white" />;
+  }
+};
 
 // ── Single milestone card ───────────────────────────────────────────────────
 const Card: React.FC<{ item: TimelineMilestone }> = ({ item }) => {
-  const color  = TYPE_COLOR[item.type];
-  const isWin  = item.type === "hackathon" || item.type === "win";
+  const color = TYPE_COLOR[item.type];
+  const isWin = item.type === "hackathon" || item.type === "win";
 
   return (
     <div
@@ -69,11 +102,14 @@ const Card: React.FC<{ item: TimelineMilestone }> = ({ item }) => {
       />
 
       <div className="relative z-10">
-        {/* Row 1: badge + type + year */}
-        <div className="flex items-center gap-2 mb-2 flex-wrap">
-          <span className="text-lg select-none leading-none" style={{ filter: isWin ? `drop-shadow(0 0 6px ${color})` : "none" }}>
-            {item.badge}
-          </span>
+        {/* Row 1: icon + type + year */}
+        <div className="flex items-center gap-2.5 mb-2.5 flex-wrap">
+          <div
+            className="p-1.5 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center select-none shadow-[0_0_10px_rgba(255,255,255,0.03)]"
+            style={{ borderColor: `${color}35`, filter: isWin ? `drop-shadow(0 0 6px ${color})` : "none" }}
+          >
+            {getMilestoneIcon(item)}
+          </div>
           <span
             className="font-mono text-[8px] tracking-[0.28em] uppercase font-bold px-2 py-0.5 rounded-full border"
             style={{ color, borderColor: `${color}35`, background: `${color}12` }}
@@ -115,10 +151,10 @@ const EraPanel: React.FC<{ era: MilestoneEra; items: TimelineMilestone[] }> = ({
       className="era-panel flex-shrink-0 w-screen h-full flex flex-col"
       data-era={era}
       style={{
-        paddingTop:    SAFE.top,
+        paddingTop: SAFE.top,
         paddingBottom: SAFE.bottom,
-        paddingLeft:   60,
-        paddingRight:  SAFE.right,
+        paddingLeft: SAFE.left,
+        paddingRight: SAFE.right,
       }}
     >
       {/* ── Era header ──────────────────────────────────────────── */}
@@ -133,7 +169,7 @@ const EraPanel: React.FC<{ era: MilestoneEra; items: TimelineMilestone[] }> = ({
             <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/25">{cfg.years}</span>
           </div>
 
-          {/* Era title — inline flow, no absolute, no bleeding */}
+          {/* Era title */}
           <h3
             className="era-title font-serif-italic leading-none"
             style={{
@@ -189,11 +225,9 @@ const EraPanel: React.FC<{ era: MilestoneEra; items: TimelineMilestone[] }> = ({
 
 // ── Main component ──────────────────────────────────────────────────────────
 export const Stage04Learning: React.FC = () => {
-  const sectionRef  = useRef<HTMLDivElement>(null);
-  const trackRef    = useRef<HTMLDivElement>(null);
-  const counterRef  = useRef<HTMLSpanElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-  const eraLabelRef = useRef<HTMLSpanElement>(null);
 
   const byEra = useMemo(() => {
     const map: Record<MilestoneEra, TimelineMilestone[]> = {
@@ -205,10 +239,9 @@ export const Stage04Learning: React.FC = () => {
 
   useEffect(() => {
     const section = sectionRef.current;
-    const track   = trackRef.current;
+    const track = trackRef.current;
     if (!section || !track) return;
 
-    const NUM_ERAS = ERAS.length;
     const getScrollDist = () => track.scrollWidth - window.innerWidth;
 
     const mainTween = gsap.to(track, {
@@ -225,25 +258,19 @@ export const Stage04Learning: React.FC = () => {
           if (progressRef.current) {
             progressRef.current.style.width = `${self.progress * 100}%`;
           }
-          if (eraLabelRef.current && counterRef.current) {
-            const idx = Math.min(Math.floor(self.progress * NUM_ERAS), NUM_ERAS - 1);
-            const era = ERAS[idx];
-            eraLabelRef.current.textContent = ERA_CONFIG[era].title;
-            counterRef.current.textContent  = ERA_CONFIG[era].number;
-          }
         },
       },
     });
 
     // Per-era panel animations
     track.querySelectorAll<HTMLDivElement>(".era-panel").forEach((panel) => {
-      const era     = panel.dataset.era as MilestoneEra;
-      const cfg     = ERA_CONFIG[era];
-      const title   = panel.querySelector(".era-title");
-      const accent  = panel.querySelector(".era-accent-line");
+      const era = panel.dataset.era as MilestoneEra;
+      const cfg = ERA_CONFIG[era];
+      const title = panel.querySelector(".era-title");
+      const accent = panel.querySelector(".era-accent-line");
       const subtitle = panel.querySelector(".era-subtitle");
-      const header  = panel.querySelector(".era-header");
-      const cards   = panel.querySelectorAll<HTMLDivElement>(".chronicle-item");
+      const header = panel.querySelector(".era-header");
+      const cards = panel.querySelectorAll<HTMLDivElement>(".chronicle-item");
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -295,29 +322,9 @@ export const Stage04Learning: React.FC = () => {
     <section id="stage-3" className="relative w-full">
       <div
         ref={sectionRef}
-        className="relative w-full overflow-hidden bg-[#111111]"
+        className="relative w-full overflow-hidden"
         style={{ height: "100vh" }}
       >
-        {/* ── Thin HUD bar just below Nav ─────────────────────── */}
-        <div
-          className="absolute left-0 right-0 z-30 pointer-events-none flex items-center justify-between px-[60px]"
-          style={{
-            top: SAFE.top - 6,
-            paddingRight: SAFE.right,
-            height: "24px",
-          }}
-        >
-          <span className="font-mono text-[8px] tracking-[0.45em] uppercase text-white/20">
-            04 // LEARNING · [ EXPERIENCE ] ·&nbsp;
-            <span ref={eraLabelRef} className="text-white/40">GENESIS</span>
-          </span>
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-[8px] tracking-[0.3em] uppercase text-white/20">ERA</span>
-            <span ref={counterRef} className="font-mono text-sm font-bold tabular-nums" style={{ color: "#ff9f5a" }}>01</span>
-            <span className="font-mono text-[8px] text-white/20">/ 04</span>
-          </div>
-        </div>
-
         {/* ── Horizontal track ────────────────────────────────── */}
         <div
           ref={trackRef}
@@ -329,29 +336,26 @@ export const Stage04Learning: React.FC = () => {
           ))}
         </div>
 
-        {/* ── Thin progress bar at very bottom ────────────────── */}
-        <div className="absolute bottom-0 left-0 z-30 h-[2px] bg-white/5" style={{ right: SAFE.right }}>
+        {/* ── Thin progress bar at very bottom (spans full screen width, no AI gradients) ── */}
+        <div className="absolute bottom-0 left-0 right-0 z-30 h-[2px] bg-white/5">
           <div
             ref={progressRef}
-            className="h-full"
+            className="h-full transition-none shadow-[0_0_10px_rgba(255,196,144,0.5)]"
             style={{
               width: "0%",
-              background: "linear-gradient(90deg, #90d5ff, #ff9f5a, #a0ffc8, #ffd890)",
+              background: "#ffc490",
             }}
           />
         </div>
 
-        {/* ── Era dots ─────────────────────────────────────────── */}
-        <div
-          className="absolute bottom-5 z-30 pointer-events-none flex items-center gap-6"
-          style={{ left: "60px" }}
-        >
+        {/* ── Era dots (centered at bottom to avoid overlapping left/right indicators) ── */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none flex items-center gap-6">
           {ERAS.map((era) => {
             const cfg = ERA_CONFIG[era];
             return (
               <div key={era} className="flex items-center gap-2">
-                <div className="w-1 h-1 rounded-full" style={{ background: `${cfg.color}60` }} />
-                <span className="font-mono text-[7px] tracking-[0.3em] uppercase hidden sm:inline" style={{ color: `${cfg.color}50` }}>
+                <div className="w-1.5 h-1.5 rounded-full shadow-[0_0_6px_currentColor]" style={{ background: cfg.color, color: cfg.color }} />
+                <span className="font-mono text-[8px] tracking-[0.3em] uppercase font-medium hidden sm:inline" style={{ color: `${cfg.color}80` }}>
                   {cfg.title}
                 </span>
               </div>

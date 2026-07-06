@@ -10,9 +10,9 @@ import { useSoul } from "../../context/SoulContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type FilterCategory = "ALL" | "3D & WEBGL" | "SHADERS & AUDIO" | "INTERACTIVE & GSAP";
+type FilterCategory = "ALL" | "AI & SAAS" | "CLIENT WORK" | "WEB & E-COMMERCE" | "WEB3 & INFRA";
 
-const FEATURED_LIMIT = 3;
+const FEATURED_LIMIT = 6;
 
 export const Stage05Creation: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -26,19 +26,7 @@ export const Stage05Creation: React.FC = () => {
   // Smart filtering logic
   const filteredProjects = useMemo(() => {
     if (activeFilter === "ALL") return SITE_CONTENT.projects;
-    return SITE_CONTENT.projects.filter((p) => {
-      const tags = p.tags.map((t) => t.toUpperCase());
-      if (activeFilter === "3D & WEBGL") {
-        return tags.some((t) => t.includes("THREE") || t.includes("WEBGL") || t.includes("FIBER") || t.includes("PHOTOGRAMMETRY"));
-      }
-      if (activeFilter === "SHADERS & AUDIO") {
-        return tags.some((t) => t.includes("GLSL") || t.includes("SHADER") || t.includes("AUDIO") || t.includes("CANVAS"));
-      }
-      if (activeFilter === "INTERACTIVE & GSAP") {
-        return tags.some((t) => t.includes("GSAP") || t.includes("LENIS") || t.includes("NEXT") || t.includes("TAILWIND") || t.includes("TYPESCRIPT"));
-      }
-      return true;
-    });
+    return SITE_CONTENT.projects.filter((p) => p.category === activeFilter);
   }, [activeFilter]);
 
   // Projects to actually display based on showAll state
@@ -110,7 +98,7 @@ export const Stage05Creation: React.FC = () => {
           {/* Minimalist Editorial Text Filters */}
           <div className="flex flex-wrap items-center gap-6 sm:gap-10 font-mono text-xs tracking-[0.25em] uppercase border-b border-white/10 pb-6">
             <span className="text-white/30 text-[10px]">SECTOR //</span>
-            {(["ALL", "3D & WEBGL", "SHADERS & AUDIO", "INTERACTIVE & GSAP"] as FilterCategory[]).map((cat) => {
+            {(["ALL", "AI & SAAS", "CLIENT WORK", "WEB & E-COMMERCE", "WEB3 & INFRA"] as FilterCategory[]).map((cat) => {
               const isActive = activeFilter === cat;
               return (
                 <button
