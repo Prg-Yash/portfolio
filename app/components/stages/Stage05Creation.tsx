@@ -10,7 +10,7 @@ import { useSoul } from "../../context/SoulContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type FilterCategory = "ALL" | "AI & SAAS" | "CLIENT WORK" | "WEB & E-COMMERCE" | "WEB3 & INFRA";
+type FilterCategory = "ALL" | "PERSONAL" | "CLIENT";
 
 const FEATURED_LIMIT = 6;
 
@@ -34,16 +34,15 @@ export const Stage05Creation: React.FC = () => {
     return showAll ? filteredProjects : filteredProjects.slice(0, FEATURED_LIMIT);
   }, [filteredProjects, showAll]);
 
-  // Ensure an item is open when switching filters
+  // Reset pagination and open first item only when filter category changes
   useEffect(() => {
-    if (filteredProjects.length > 0 && !filteredProjects.some((p) => p.id === openId)) {
+    setShowAll(false);
+    if (filteredProjects.length > 0) {
       setOpenId(filteredProjects[0].id);
     }
-    // Reset pagination on filter change
-    setShowAll(false);
-  }, [filteredProjects, openId]);
+  }, [activeFilter, filteredProjects]);
 
-  // ScrollTrigger entrance animation for the rows
+  // 1. ScrollTrigger entrance animation ONLY when displayedProjects changes (filter switch or explore full)
   useEffect(() => {
     const el = listRef.current;
     if (!el) return;
@@ -56,11 +55,20 @@ export const Stage05Creation: React.FC = () => {
         opacity: 1,
         y: 0,
         duration: 0.6,
-        stagger: 0.1,
+        stagger: 0.08,
         ease: "power3.out",
       }
     );
   }, [displayedProjects]);
+
+  // 2. Refresh ScrollTrigger and Lenis AFTER the accordion transition (700ms) completes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+      window.dispatchEvent(new Event("resize"));
+    }, 750);
+    return () => clearTimeout(timer);
+  }, [displayedProjects, openId]);
 
   return (
     <section
@@ -98,7 +106,7 @@ export const Stage05Creation: React.FC = () => {
           {/* Minimalist Editorial Text Filters */}
           <div className="flex flex-wrap items-center gap-6 sm:gap-10 font-mono text-xs tracking-[0.25em] uppercase border-b border-white/10 pb-6">
             <span className="text-white/30 text-[10px]">SECTOR //</span>
-            {(["ALL", "AI & SAAS", "CLIENT WORK", "WEB & E-COMMERCE", "WEB3 & INFRA"] as FilterCategory[]).map((cat) => {
+            {(["ALL", "PERSONAL", "CLIENT"] as FilterCategory[]).map((cat) => {
               const isActive = activeFilter === cat;
               return (
                 <button
@@ -174,7 +182,7 @@ export const Stage05Creation: React.FC = () => {
                     {/* Right: Subtitle + Year + Indicator */}
                     <div className="flex items-center justify-between md:justify-end gap-6 sm:gap-10 shrink-0 pl-12 md:pl-0">
                       <span className="font-mono text-[11px] tracking-[0.2em] text-white/40 uppercase hidden sm:block">
-                        {project.role}
+                        {project.subtitle}
                       </span>
                       <span className="font-mono text-xs tracking-[0.2em] text-white/60">
                         {project.year}
@@ -259,32 +267,26 @@ export const Stage05Creation: React.FC = () => {
                             </div>
                           </div>
 
-                          {/* Right 5 cols: Telemetry Note & Action Link */}
-                          <div className="lg:col-span-5 bg-white/[0.02] border border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col justify-between h-full space-y-8">
-                            <div>
-                              <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.25em] text-[#ffc490] uppercase mb-3 font-bold">
-                                <Sparkles className="w-3.5 h-3.5" />
-                                ASSET RECOMMENDATION
-                              </div>
-                              <p className="font-sans text-xs sm:text-sm leading-relaxed text-white/60 italic">
-                                "{project.assetSuggestion || "Verified 60FPS WebGL build ready for production deployment."}"
-                              </p>
+                          {/* Right 5 cols: Action Card */}
+                          <div className="lg:col-span-5 bg-white/[0.02] border border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col justify-center items-center text-center h-full space-y-6">
+                            <div className="space-y-2">
+                              <span className="font-mono text-[10px] tracking-[0.3em] text-white/40 uppercase block">
+                                STATUS // LIVE DEPLOYMENT
+                              </span>
+                              <h5 className="font-serif-italic text-xl text-white">
+                                {project.title}
+                              </h5>
                             </div>
 
-                            <div className="pt-6 border-t border-white/10 flex items-center justify-between">
-                              <span className="font-mono text-[10px] tracking-[0.2em] text-white/40">
-                                STATUS // LIVE
-                              </span>
-                              <a
-                                href={project.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 font-mono text-xs font-bold tracking-[0.2em] text-[#ffc490] hover:text-white transition-colors group/link"
-                              >
-                                <span>OPEN SITE</span>
-                                <ExternalLink className="w-3.5 h-3.5 transition-transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5" />
-                              </a>
-                            </div>
+                            <a
+                              href={project.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full py-4 rounded-xl border border-[#ffc490]/40 bg-[#ffc490]/10 hover:bg-[#ffc490] text-[#ffc490] hover:text-black font-mono text-xs font-bold tracking-[0.25em] uppercase transition-all duration-300 flex items-center justify-center gap-3 group/btn shadow-[0_0_20px_rgba(255,196,144,0.1)] hover:shadow-[0_0_30px_rgba(255,196,144,0.4)]"
+                            >
+                              <span>VISIT WEBSITE</span>
+                              <ExternalLink className="w-4 h-4 transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
+                            </a>
                           </div>
 
                         </div>

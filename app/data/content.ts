@@ -6,10 +6,8 @@ export interface Project {
   tags: string[];
   image: string;
   link: string;
-  role: string;
   year: string;
-  assetSuggestion: string;
-  category?: "AI & SAAS" | "CLIENT WORK" | "WEB & E-COMMERCE" | "WEB3 & INFRA";
+  category?: "PERSONAL" | "CLIENT";
 }
 
 export interface Skill {
@@ -408,97 +406,94 @@ export const SITE_CONTENT = {
   ] as TimelineMilestone[],
 
   projects: [
-    // ── AI & SAAS PLATFORMS ──────────────────────────────────────────────────
+    // ── PERSONAL PROJECTS & SAAS ─────────────────────────────────────────────
     {
       id: "sitepilot",
       title: "Sitepilot",
       subtitle: "AI Multi-Tenant Custom Website Engine",
       description: "An AI-powered multi-tenant architecture engineered to autonomously generate, deploy, and manage enterprise-grade organizational websites natively. Built during SPIT Hackathon with dynamic theme synthesis and automated content provisioning.",
-      tags: ["NEXT.JS", "AI / LLM", "MULTI-TENANT", "TAILWIND CSS", "SAAS"],
-      image: "/images/project1.png",
+      tags: ["NEXT.JS", "NEXTAUTH", "PRISMA", "TAILWIND CSS", "SHADCN", "POSTGRESQL", "AWS S3", "CLOUDFLARE", "LOCAL LLM"],
+      image: "/projects/sitepilot.webp",
       link: "https://spit-hackathon-2026.vercel.app/",
-      role: "Lead Architect & Full-Stack Engineer",
       year: "2026",
-      category: "AI & SAAS",
-      assetSuggestion: "RECOMMENDED ASSET: Screen recording showing AI generating a complete customized website live from prompt to deployment."
+      category: "PERSONAL"
     },
     {
       id: "ecoflow",
       title: "EcoFlow",
       subtitle: "Vision AI Gamified Waste Management",
       description: "A revolutionary waste management platform leveraging Google Gemini 2.0 Flash AI for intelligent waste verification. Optimizes municipal collection routes with real-time tracking and incentivizes citizen participation via a gamified QR verification marketplace.",
-      tags: ["GEMINI 2.0 AI", "VISION AI", "REAL-TIME TRACKING", "FULL-STACK", "GAMIFICATION"],
-      image: "/images/project2.png",
+      tags: ["NEXT.JS", "NEXTAUTH", "VISION API", "PRISMA", "POSTGRESQL", "GOOGLE MAPS API", "AWS S3"],
+      image: "/projects/ecoflow.webp",
       link: "https://ecoflow.devally.in",
-      role: "Lead AI & Full-Stack Developer",
       year: "2026",
-      category: "AI & SAAS",
-      assetSuggestion: "RECOMMENDED ASSET: Video demonstration of Gemini AI identifying waste categories via camera feed and awarding green tokens."
+      category: "PERSONAL"
     },
     {
       id: "thikana",
       title: "Thikana",
       subtitle: "Local Business Growth & Storefront SaaS",
       description: "A powerful SaaS platform enabling local businesses to launch customizable digital storefronts, automate promotional offers, and amplify digital presence. Winner of 2+ National Level Competitions and selected for DiPEx 2025.",
-      tags: ["SAAS", "NEXT.JS", "STOREFRONT ENGINE", "AUTOMATION", "DIPEX 2025"],
-      image: "/images/project3.png",
+      tags: ["NEXT.JS", "NEXTAUTH", "FIREBASE", "TAILWIND CSS", "SHADCN", "AWS S3", "GOOGLE MAPS API", "VAPI API", "REACT NATIVE", "PYTHON", "ALGOLIA", "RAZORPAY", "GEMINI API"],
+      image: "/projects/thikana.webp",
       link: "https://tech-thikana.devally.in",
-      role: "Full-Stack Creator & Product Lead",
       year: "2025",
-      category: "AI & SAAS",
-      assetSuggestion: "RECOMMENDED ASSET: Showcase of local merchant storefront creation dashboard and live mobile customer view."
+      category: "PERSONAL"
     },
     {
       id: "gten",
       title: "Gten — Fund Flow Intelligence",
       subtitle: "AI/ML Financial Forensics & Fraud Detection",
       description: "An advanced financial forensics platform utilizing AI/ML models for real-time fund flow intelligence and anomaly detection. Developed during the prestigious national Idea 2.0 Hackathon organized by Union Bank of India.",
-      tags: ["AI / ML", "FINTECH", "FRAUD DETECTION", "DATA VISUALIZATION", "PYTHON"],
-      image: "/images/project1.png",
+      tags: ["REACT.JS", "PRISMA", "POSTGRESQL", "NEO4J", "PYTHON", "FASTAPI", "SHAP", "GEMINI", "RESEND"],
+      image: "/projects/gten.webp",
       link: "https://g-ten.devally.in",
-      role: "Lead AI/ML Engineer",
       year: "2025",
-      category: "AI & SAAS",
-      assetSuggestion: "RECOMMENDED ASSET: Interactive network graph simulation tracing suspicious fund routing across multiple node tiers."
+      category: "PERSONAL"
     },
     {
       id: "eve-manager",
       title: "EVE Manager",
       subtitle: "Institutional Event & Campus Ecosystem",
       description: "An end-to-end event management SaaS featuring instant QR-based attendance verification, role-based access control, volunteer workflows, automated payment gateways, real-time analytics, and a built-in virtual meeting portal. Technothon '23 Winning Project.",
-      tags: ["SAAS", "QR VERIFICATION", "PAYMENTS", "ANALYTICS", "TECHNOTHON WINNER"],
-      image: "/images/project2.png",
+      tags: ["NEXT.JS", "FIREBASE", "TAILWIND CSS", "RAZORPAY", "RESEND"],
+      image: "/projects/evemanager.webp",
       link: "https://evemanager.vercel.app",
-      role: "Lead Full-Stack Architect",
       year: "2024",
-      category: "AI & SAAS",
-      assetSuggestion: "RECOMMENDED ASSET: Live dashboard walkthrough of QR ticket scanning and real-time attendee analytics."
+      category: "PERSONAL"
     },
     {
       id: "booknow",
       title: "BookNow",
       subtitle: "Smart Scheduling & Consultation SaaS",
       description: "A high-performance appointment booking product featuring smart automated scheduling, integrated payment processing, intelligent SMS/email reminders, and deep analytical dashboards within a highly secure architecture. OdooxSPIT National Hackathon Winner.",
-      tags: ["SAAS", "SMART SCHEDULING", "PAYMENT GATEWAY", "ANALYTICS", "ODOOXSPIT WINNER"],
-      image: "/images/project3.png",
+      tags: ["NEXT.JS", "TAILWINDCSS", "SHADCN", "NEXTAUTH", "PRISMA", "POSTFRESQL", "RAZORPAY", "BOLNA API", "METAPI"],
+      image: "/projects/booknow.webp",
       link: "https://booknow.devally.in",
-      role: "Lead Product Engineer",
       year: "2025",
-      category: "AI & SAAS",
-      assetSuggestion: "RECOMMENDED ASSET: Interactive booking flow and automated SMS reminder preview."
+      category: "PERSONAL"
     },
     {
       id: "ngo-connect",
       title: "NGO Connect",
-      subtitle: "Centralized Governance & Escrow Platform",
+      subtitle: "All in one NGO management ecosystem",
       description: "A centralized, transparent operational platform designed for NGOs to orchestrate activities, manage volunteer forces, and execute verified financial payouts through an integrated escrow system, ensuring total operational accountability.",
-      tags: ["ESCROW SYSTEM", "FINTECH", "TRANSPARENCY", "FULL-STACK", "NGO GOVERNANCE"],
-      image: "/images/project1.png",
+      tags: ["NEXT.JS", "FIREBASE", "TAIWINDCSS", "SHADCN", "RAZORPAY"],
+      image: "/projects/ngoconnect.webp",
       link: "https://ngoconnect.devally.in/",
-      role: "Lead System Architect",
       year: "2025",
-      category: "AI & SAAS",
-      assetSuggestion: "RECOMMENDED ASSET: Diagrammatic animation of smart escrow payout release upon volunteer milestone verification."
+      category: "PERSONAL"
+    },
+    {
+      id: "refkit",
+      title: "Refkit",
+      subtitle: "Web3 Referral & On-Chain Reward Infrastructure",
+      description: "A decentralized Web3 referral and reward infrastructure. Enables brands to fund marketing campaigns directly with cryptocurrency, track referral attributions natively on-chain, and automatically distribute smart-contract rewards to brand advocates.",
+      tags: ["WEB3", "SMART CONTRACTS", "ON-CHAIN TRACKING", "CRYPTO PAYOUTS", "DAPP"],
+      image: "/projects/refkit.webp",
+      link: "#",
+      year: "2026",
+      category: "PERSONAL"
     },
 
     // ── CLIENT WORK & AGENCY ─────────────────────────────────────────────────
@@ -507,119 +502,99 @@ export const SITE_CONTENT = {
       title: "Dev Ally | Digital Agency",
       subtitle: "Flagship Agency Showcase & Client Success Portal",
       description: "The official flagship website for Dev Ally, engineered to showcase high-impact digital services, case studies, and client transformation stories. Optimized for lightning-fast performance, technical SEO, and seamless content management.",
-      tags: ["AGENCY", "HIGH PERFORMANCE", "SEO OPTIMIZED", "UI/UX DESIGN", "WORDPRESS"],
-      image: "/images/project2.png",
+      tags: ["WORDPRESS", "ELEMENTOR"],
+      image: "/projects/devally.webp",
       link: "https://www.devally.in/",
-      role: "Co-Founder & Lead Web Architect",
       year: "2025",
-      category: "CLIENT WORK",
-      assetSuggestion: "RECOMMENDED ASSET: Smooth scroll walkthrough of agency case study presentations and interactive contact drawers."
+      category: "CLIENT"
     },
     {
       id: "brilliant-minds",
       title: "Brilliant Minds",
       subtitle: "Byculla's Premier Tuition Portal & Admin Suite",
       description: "A comprehensive web platform for Byculla's leading tuition institute, displaying academic programs, student toppers, and institutional events. Powered by a custom-built, full-featured administrative control panel for seamless academic management.",
-      tags: ["CLIENT PROJECT", "ADMIN PANEL", "CMS", "RESPONSIVE DESIGN", "EDUCATION"],
-      image: "/images/project3.png",
+      tags: ["NEXT.JS", "TAILWIND CSS", "SHADCN", "NEXTAUTH", "FIREBASE", "FIREBASE STORAGE"],
+      image: "/projects/brilliantmindsweb.webp",
       link: "https://brilliantminds.co.in",
-      role: "Lead Full-Stack Developer",
       year: "2025",
-      category: "CLIENT WORK",
-      assetSuggestion: "RECOMMENDED ASSET: Showcase of student topper gallery and admin management dashboard."
+      category: "CLIENT"
     },
     {
       id: "brilliant-minds-app",
       title: "Brilliant Minds Application",
       subtitle: "Student & Admin Academic Workflow App",
       description: "A dedicated web application bridging administrators and students. Streamlines daily academic workflows including dynamic timetable scheduling, automated test scoring, attendance tracking, and instant broadcast announcements.",
-      tags: ["WEB APPLICATION", "STUDENT PORTAL", "ATTENDANCE TRACKING", "REAL-TIME", "CLIENT PROJECT"],
-      image: "/images/project1.png",
+      tags: ["React Native", "Firebase", "FCM"],
+      image: "/projects/brilliantmindsapp.webp",
       link: "https://app.brilliantminds.co.in",
-      role: "Lead Web App Engineer",
       year: "2025",
-      category: "CLIENT WORK",
-      assetSuggestion: "RECOMMENDED ASSET: Mobile app interface showing live test scores and timetable notifications."
+      category: "CLIENT"
     },
     {
       id: "the-common-people",
       title: "The Common People (TCP)",
       subtitle: "Australian ACNC-Registered Humanitarian Portal",
       description: "The digital home for an Australian ACNC-registered non-profit organization established in 2014. Engineered to drive global awareness and fundraising for child labor eradication, healthcare restoration, and formal education initiatives across international borders.",
-      tags: ["NON-PROFIT", "AUSTRALIA ACNC", "FUNDRAISING", "ACCESSIBILITY", "GLOBAL IMPACT"],
-      image: "/images/project2.png",
+      tags: ["WORDPRESS", "ELEMENTOR"],
+      image: "/projects/thecommonpeople.webp",
       link: "https://thecommonpeople.org/",
-      role: "Lead Web Architect & Consultant",
       year: "2025",
-      category: "CLIENT WORK",
-      assetSuggestion: "RECOMMENDED ASSET: High-impact documentary header video and interactive global impact map."
+      category: "CLIENT"
     },
     {
       id: "fyfo-health",
       title: "FYFO — Holistic Health",
       subtitle: "High-Conversion Fitness Lead Generation Engine",
       description: "A high-octane lead generation landing page built for a fitness coach on a mission to transform mindset and physical health. Features psychological conversion copywriting, instant lead capture forms, and automated real-time email dispatchers.",
-      tags: ["LEAD GENERATION", "FITNESS", "AUTOMATED EMAIL", "CONVERSION OPTIMIZED", "CLIENT WORK"],
-      image: "/images/project3.png",
+      tags: ["NEXT.JS", "TAILWINDCSS", "SHADCN", "SMTP"],
+      image: "/projects/fyfo.webp",
       link: "http://holistic-health.fyfo.in/",
-      role: "Web Designer & Automation Developer",
       year: "2025",
-      category: "CLIENT WORK",
-      assetSuggestion: "RECOMMENDED ASSET: Split-screen comparison of lead form submission and instant coach notification dispatch."
+      category: "CLIENT"
     },
-
-    // ── WEB & E-COMMERCE ─────────────────────────────────────────────────────
     {
       id: "jennifers-flowers",
       title: "Jennifer’s Flowers",
       subtitle: "Canadian Bespoke Floral E-Commerce Store",
       description: "An elegant, high-converting e-commerce platform built for a Canada-based floral boutique in Vaughan. Features custom bouquet ordering workflows, multi-parameter product filtering, and localized delivery scheduling.",
-      tags: ["E-COMMERCE", "CANADA CLIENT", "CUSTOM ORDERING", "ADVANCED FILTERS", "WORDPRESS"],
-      image: "/images/project1.png",
+      tags: ["WORDPRESS", "ELEMENTOR", "WOOCOMMERCE"],
+      image: "/projects/jenniferflowers.webp",
       link: "https://flowersinvaughan.ca/",
-      role: "E-Commerce Architect",
       year: "2025",
-      category: "WEB & E-COMMERCE",
-      assetSuggestion: "RECOMMENDED ASSET: Smooth filtering interaction and custom bouquet builder preview."
+      category: "CLIENT"
     },
     {
       id: "rcs-uniforms",
       title: "RCS Uniforms",
       subtitle: "Royal Crown School E-Commerce Distribution",
       description: "A robust, dedicated e-commerce distribution system developed for Royal Crown School in Canada. Streamlines the purchasing process for official school uniforms with automated sizing guides, inventory tracking, and student verification.",
-      tags: ["E-COMMERCE", "CANADA SCHOOL", "INVENTORY MANAGEMENT", "PAYMENT GATEWAY", "CLIENT WORK"],
-      image: "/images/project2.png",
+      tags: ["WORDPRESS", "ELEMENTOR", "WOOCOMMERCE"],
+      image: "/projects/royalcrownuniform.webp",
       link: "https://uniform.royalcrownschool.com/",
-      role: "Lead E-Commerce Developer",
       year: "2025",
-      category: "WEB & E-COMMERCE",
-      assetSuggestion: "RECOMMENDED ASSET: Student uniform selection interface and checkout flow."
+      category: "CLIENT"
     },
     {
       id: "navkar-store",
       title: "Navkar Academy Store",
       subtitle: "Digital E-Book E-Commerce & Analytics Suite",
       description: "An automated digital e-commerce storefront for Navkar Academy selling proprietary E-Books. Features interactive cover page previews, secure digital document delivery, and a comprehensive admin suite tracking sales statistics and revenue analytics.",
-      tags: ["E-COMMERCE", "DIGITAL GOODS", "ADMIN DASHBOARD", "ANALYTICS", "CLIENT PROJECT"],
-      image: "/images/project3.png",
+      tags: ["NEXT.JS", "TAILWINDCSS", "SHADCN", "FIREBASE", "RAZORPAY"],
+      image: "/projects/navkar-academystore.webp",
       link: "https://navkar-academy-store.vercel.app/",
-      role: "Full-Stack Developer",
       year: "2025",
-      category: "WEB & E-COMMERCE",
-      assetSuggestion: "RECOMMENDED ASSET: 3D interactive E-book cover flip preview and admin sales analytics chart."
+      category: "CLIENT"
     },
     {
       id: "navkar-academy",
       title: "Navkar Academy",
       subtitle: "Playgroup & Early Childhood Institutional Portal",
       description: "A warm, engaging landing experience designed for an early childhood playgroup school. Showcases interactive photo galleries, curriculum highlights, and upcoming campus events to prospective parents with delightful micro-animations.",
-      tags: ["LANDING PAGE", "PLAYGROUP", "GALLERY SHOWCASE", "RESPONSIVE UI", "CLIENT WORK"],
-      image: "/images/project1.png",
+      tags: ["NEXT.JS", "TAILWINDCSS", "SHADCN"],
+      image: "/projects/navkar-academy.webp",
       link: "https://navkar-academy.vercel.app/",
-      role: "Front-End Designer & Developer",
       year: "2025",
-      category: "WEB & E-COMMERCE",
-      assetSuggestion: "RECOMMENDED ASSET: Interactive photo gallery lightbox and event calendar tour."
+      category: "CLIENT"
     },
     {
       id: "nutty-kids",
@@ -627,27 +602,10 @@ export const SITE_CONTENT = {
       subtitle: "Playful Digital Presence for Early Learning",
       description: "A playful, modern landing platform engineered for a children's playgroup school. Highlights institutional values, event schedules, and vivid photographic galleries in a child-friendly, mobile-optimized interface.",
       tags: ["LANDING PAGE", "CHILD EDUCATION", "INTERACTIVE GALLERY", "MOBILE OPTIMIZED", "CLIENT WORK"],
-      image: "/images/project2.png",
+      image: "/projects/nuttykids.webp",
       link: "https://nuttykids.com",
-      role: "Web Developer",
       year: "2025",
-      category: "WEB & E-COMMERCE",
-      assetSuggestion: "RECOMMENDED ASSET: Mobile responsiveness demo and colorful gallery interactions."
-    },
-
-    // ── WEB3 & INFRA ─────────────────────────────────────────────────────────
-    {
-      id: "refkit",
-      title: "Refkit",
-      subtitle: "Web3 Referral & On-Chain Reward Infrastructure",
-      description: "A decentralized Web3 referral and reward infrastructure. Enables brands to fund marketing campaigns directly with cryptocurrency, track referral attributions natively on-chain, and automatically distribute smart-contract rewards to brand advocates.",
-      tags: ["WEB3", "SMART CONTRACTS", "ON-CHAIN TRACKING", "CRYPTO PAYOUTS", "DAPP"],
-      image: "/images/project3.png",
-      link: "#",
-      role: "Web3 & Smart Contract Developer",
-      year: "2026",
-      category: "WEB3 & INFRA",
-      assetSuggestion: "RECOMMENDED ASSET: Web3 wallet connection and real-time on-chain reward payout transaction animation."
+      category: "CLIENT"
     }
   ] as Project[],
 
