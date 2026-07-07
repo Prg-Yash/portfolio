@@ -662,18 +662,17 @@ export const SITE_CONTENT = {
     closingLine: "Let's create something worth becoming.",
     subline: "I am currently accepting select creative commissions, technical advisory roles, and collaborative art projects for 2026 and beyond.",
     contact: {
-      email: "create@journeyofthesoul.studio",
-      phone: "+1 (555) 019-2834",
-      location: "New York / Global Remote",
+      email: "yashnimse92@gmail.com",
+      phone: "+91 8097310988",
+      location: "Mumbai / Global Remote",
       resumeUrl: "/resume.pdf"
     },
     socials: [
-      { name: "AWWWARDS", url: "https://awwwards.com" },
-      { name: "GITHUB", url: "https://github.com" },
-      { name: "TWITTER / X", url: "https://twitter.com" },
-      { name: "LINKEDIN", url: "https://linkedin.com" },
-      { name: "INSTAGRAM", url: "https://instagram.com" }
+      { name: "GITHUB", url: "https://github.com/Prg-Yash" },
+      { name: "LINKEDIN", url: "https://linkedin.com/in/yashnimse" },
+      { name: "LEETCODE", url: "https://leetcode.com/u/yashnimse92/" },
+      { name: "INSTAGRAM", url: "https://instagram.com/yash.nimse.92/" }
     ],
-    copyright: "© 2026 THE JOURNEY OF THE SOUL. CRAFTED WITH WITH CODE, LIGHT, AND PATIENCE."
+    copyright: "© 2026 THE JOURNEY OF THE SOUL. CRAFTED WITH CODE, LIGHT, AND PATIENCE."
   }
 };

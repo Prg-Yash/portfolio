@@ -9,8 +9,6 @@ import { useSoul } from "../../context/SoulContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
-type ScopeOption = "WEBGL & 3D" | "FULL-STACK APP" | "CREATIVE DIRECTION" | "AI & SHADERS";
-
 export const Stage09Legacy: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
@@ -18,19 +16,10 @@ export const Stage09Legacy: React.FC = () => {
   const { scrollToStageIndex, setCursorText, setCursorColor } = useSoul();
 
   const [copied, setCopied] = useState(false);
-  const [selectedScopes, setSelectedScopes] = useState<ScopeOption[]>(["WEBGL & 3D"]);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-
-  const toggleScope = (scope: ScopeOption) => {
-    if (selectedScopes.includes(scope)) {
-      if (selectedScopes.length > 1) {
-        setSelectedScopes(selectedScopes.filter((s) => s !== scope));
-      }
-    } else {
-      setSelectedScopes([...selectedScopes, scope]);
-    }
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
 
   const handleCopy = () => {
     navigator.clipboard.writeText(SITE_CONTENT.legacy.contact.email);
@@ -38,35 +27,71 @@ export const Stage09Legacy: React.FC = () => {
     setTimeout(() => setCopied(false), 3000);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (isSubmitted && successRef.current) {
+      gsap.fromTo(
+        successRef.current,
+        { scale: 0.8, opacity: 0, filter: "blur(20px)" },
+        { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "back.out(1.7)" }
+      );
+    }
+  }, [isSubmitted]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formRef.current || !successRef.current) return;
+    if (!formRef.current || isSubmitting) return;
 
-    // ── Crazy GSAP Form Dissolve into Cosmic Confirmation ──────────
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setIsSubmitted(true);
-        gsap.fromTo(
-          successRef.current,
-          { scale: 0.8, opacity: 0, filter: "blur(20px)" },
-          { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "back.out(1.7)" }
-        );
-      },
-    });
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    setCursorText("SENDING...");
 
-    tl.to(formRef.current, {
-      scale: 0.95,
-      opacity: 0,
-      filter: "blur(15px)",
-      y: -30,
-      duration: 0.6,
-      ease: "power3.in",
-    });
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to send message.");
+      }
+
+      // ── Crazy GSAP Form Dissolve into Cosmic Confirmation ──────────
+      const tl = gsap.timeline({
+        onComplete: () => {
+          setIsSubmitted(true);
+          setIsSubmitting(false);
+          setCursorText(null);
+        },
+      });
+
+      tl.to(formRef.current, {
+        scale: 0.95,
+        opacity: 0,
+        filter: "blur(15px)",
+        y: -30,
+        duration: 0.6,
+        ease: "power3.in",
+      });
+    } catch (err: any) {
+      console.error("Transmission error:", err);
+      setErrorMessage(err.message || "Failed to send transmission. Please try again.");
+      setIsSubmitting(false);
+      setCursorText(null);
+    }
   };
 
   const resetForm = () => {
     setIsSubmitted(false);
-    setFormData({ name: "", email: "", message: "" });
+    setErrorMessage(null);
+    setFormData({ name: "", email: "", phone: "", message: "" });
     if (formRef.current) {
       gsap.fromTo(
         formRef.current,
@@ -178,37 +203,25 @@ export const Stage09Legacy: React.FC = () => {
                   <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#ffd890] transition-all duration-500 group-focus-within:w-full shadow-[0_0_12px_#ffd890]" />
                 </div>
 
-                {/* Field 3: Scope Selector Pills */}
-                <div className="form-field-anim">
-                  <label className="block font-mono text-xs font-bold tracking-[0.3em] text-[#ffd890] uppercase mb-4">
-                    03 // COMMISSION SCOPE [ SELECT ALL THAT APPLY ]
-                  </label>
-                  <div className="flex flex-wrap gap-2.5">
-                    {(["WEBGL & 3D", "FULL-STACK APP", "CREATIVE DIRECTION", "AI & SHADERS"] as ScopeOption[]).map((scope) => {
-                      const isSelected = selectedScopes.includes(scope);
-                      return (
-                        <button
-                          key={scope}
-                          type="button"
-                          onClick={() => toggleScope(scope)}
-                          className={`px-5 py-2.5 rounded-full font-mono text-xs tracking-[0.2em] uppercase transition-all duration-300 flex items-center gap-2 ${
-                            isSelected
-                              ? "bg-[#ffd890] text-black font-bold shadow-[0_0_20px_rgba(255,216,144,0.4)] scale-105"
-                              : "border border-white/15 bg-white/[0.02] text-white/70 hover:border-white/40 hover:text-white"
-                          }`}
-                        >
-                          <Sparkles className={`w-3.5 h-3.5 ${isSelected ? "text-black" : "text-[#ffd890]"}`} />
-                          {scope}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Field 4: The Vision */}
+                {/* Field 3: Telemetry Contact (Phone - Optional) */}
                 <div className="form-field-anim relative group">
                   <label className="block font-mono text-xs font-bold tracking-[0.3em] text-[#ffd890] uppercase mb-3">
-                    04 // THE VISION [ PROJECT SCOPE & TIMELINE ]
+                    03 // TELEMETRY CONTACT [ PHONE (OPTIONAL) ]
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="+91 80000 00000"
+                    className="w-full bg-transparent border-b border-white/20 py-4 font-serif-italic text-2xl sm:text-4xl text-white placeholder-white/20 focus:outline-none focus:border-[#ffd890] transition-colors duration-300"
+                  />
+                  <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#ffd890] transition-all duration-500 group-focus-within:w-full shadow-[0_0_12px_#ffd890]" />
+                </div>
+
+                {/* Field 4: Message */}
+                <div className="form-field-anim relative group">
+                  <label className="block font-mono text-xs font-bold tracking-[0.3em] text-[#ffd890] uppercase mb-3">
+                    04 // MESSAGE [ PROJECT DETAILS & VISION ]
                   </label>
                   <textarea
                     rows={3}
@@ -222,18 +235,30 @@ export const Stage09Legacy: React.FC = () => {
                 </div>
 
                 {/* Submit Action Pill Button */}
-                <div className="form-field-anim pt-4">
+                <div className="form-field-anim pt-4 space-y-4">
+                  {errorMessage && (
+                    <div className="p-4 rounded-xl border border-red-500/40 bg-red-500/10 text-red-400 font-mono text-xs tracking-[0.1em] uppercase">
+                      ⚠️ ERROR: {errorMessage}
+                    </div>
+                  )}
                   <button
                     type="submit"
+                    disabled={isSubmitting}
                     onMouseEnter={() => {
-                      setCursorText("TRANSMIT");
+                      setCursorText(isSubmitting ? "SENDING..." : "TRANSMIT");
                       setCursorColor("#ffd890");
                     }}
                     onMouseLeave={() => setCursorText(null)}
-                    className="group/btn relative w-full sm:w-auto inline-flex items-center justify-center gap-4 rounded-full border border-[#ffd890] bg-[#ffd890] px-12 py-6 font-mono text-sm font-bold tracking-[0.3em] uppercase text-black transition-all duration-500 hover:bg-white hover:border-white hover:scale-105 shadow-[0_0_40px_rgba(255,216,144,0.3)] overflow-hidden cursor-pointer"
+                    className={`group/btn relative w-full sm:w-auto inline-flex items-center justify-center gap-4 rounded-full border border-[#ffd890] bg-[#ffd890] px-12 py-6 font-mono text-sm font-bold tracking-[0.3em] uppercase text-black transition-all duration-500 ${
+                      isSubmitting
+                        ? "opacity-60 cursor-not-allowed animate-pulse"
+                        : "hover:bg-white hover:border-white hover:scale-105 shadow-[0_0_40px_rgba(255,216,144,0.3)] cursor-pointer"
+                    } overflow-hidden`}
                   >
-                    <span className="relative z-10">INITIATE TRANSMISSION ✦</span>
-                    <Send className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1" />
+                    <span className="relative z-10">
+                      {isSubmitting ? "TRANSMITTING SIGNAL..." : "INITIATE TRANSMISSION ✦"}
+                    </span>
+                    <Send className={`relative z-10 w-4 h-4 transition-transform duration-300 ${isSubmitting ? "animate-bounce" : "group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1"}`} />
                   </button>
                 </div>
 
