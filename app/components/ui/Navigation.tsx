@@ -19,7 +19,7 @@ export const Navigation: React.FC = () => {
   return (
     <>
       {/* Top Left Menu Button */}
-      <div className="fixed top-6 left-6 z-50">
+      <div className="fixed top-3 left-3 sm:top-6 sm:left-6 z-50">
         <button
           onClick={() => setIsOpen((prev) => !prev)}
           className="group flex items-center gap-3 rounded-full border border-white/10 bg-black/40 px-4 py-2.5 backdrop-blur-md transition-all duration-300 hover:border-white/40 hover:bg-white/10 active:scale-95"
@@ -44,7 +44,7 @@ export const Navigation: React.FC = () => {
             : "opacity-0 pointer-events-none -translate-y-8"
         }`}
       >
-        <div className="mx-auto w-full max-w-4xl px-8 py-16">
+        <div className="mx-auto w-full max-w-4xl px-4 sm:px-8 py-12 sm:py-16 max-h-screen overflow-y-auto">
           <div className="mb-8 border-b border-white/10 pb-4">
             <span className="font-mono text-[11px] tracking-[0.3em] uppercase text-white/40">
               THE 9 STAGES OF EVOLUTION

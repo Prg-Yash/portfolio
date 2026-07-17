@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 interface HyperTextProps {
   children: string;
   className?: string;
+  style?: React.CSSProperties;
   duration?: number;
   characterSet?: readonly string[];
 }
@@ -19,6 +20,7 @@ const getRandomInt = (max: number): number => Math.floor(Math.random() * max);
 export function HyperText({
   children,
   className,
+  style,
   duration = 900,
   characterSet = DEFAULT_CHARACTER_SET,
 }: HyperTextProps) {
@@ -64,7 +66,7 @@ export function HyperText({
   }, [children, duration, characterSet]);
 
   return (
-    <div className={cn("inline-flex items-center overflow-hidden py-1", className)}>
+    <div className={cn("inline-flex items-center py-1", className)} style={style}>
       {displayText.map((letter, index) => (
         <span
           key={index}

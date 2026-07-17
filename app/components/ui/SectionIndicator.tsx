@@ -24,7 +24,7 @@ export const SectionIndicator: React.FC = () => {
   if (!isLoaded) return null;
 
   return (
-    <div className="fixed bottom-6 left-6 z-40 flex items-center gap-4 pointer-events-none">
+    <div className="fixed top-3 right-3 sm:top-auto sm:right-auto sm:bottom-6 sm:left-6 z-40 flex items-center gap-2 sm:gap-4 pointer-events-none">
       {/* Animated accent glowing dot */}
       <div
         className="h-2 w-2 rounded-full transition-all duration-500 shadow-[0_0_10px_currentColor]"
@@ -36,7 +36,7 @@ export const SectionIndicator: React.FC = () => {
 
       {/* Stage Number & Name */}
       <div
-        className={`flex items-baseline gap-2 font-mono text-xs tracking-[0.3em] uppercase transition-all duration-300 ${
+        className={`flex items-baseline gap-1.5 sm:gap-2 font-mono text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase transition-all duration-300 ${
           isAnimating
             ? "opacity-0 -translate-y-2 blur-[2px]"
             : "opacity-100 translate-y-0 blur-0"

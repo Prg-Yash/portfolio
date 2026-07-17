@@ -24,8 +24,7 @@ export const Stage03Curiosity: React.FC = () => {
   return (
     <section
       id="stage-2"
-      className="relative w-full z-20 overflow-visible"
-      style={{ paddingTop: "120px", paddingBottom: "160px" }}
+      className="relative w-full z-20 overflow-visible pt-4 sm:pt-8 pb-12 sm:pb-16"
     >
       {/* Subtle radial vignette behind the constellation */}
       <div
@@ -35,11 +34,11 @@ export const Stage03Curiosity: React.FC = () => {
         }}
       />
 
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-12">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-12">
 
         {/* ── Section Header ────────────────────────────────── */}
         <div className="mb-14">
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4">
             <span className="font-mono text-xs font-bold tracking-[0.35em] text-[#ffc490] animate-pulse">
               03 // CURIOSITY · [ SKILLS ]
             </span>
@@ -48,7 +47,7 @@ export const Stage03Curiosity: React.FC = () => {
               Every experience became knowledge
             </span>
           </div>
-          <h2 className="font-serif-italic text-5xl sm:text-7xl tracking-wide text-white drop-shadow-md">
+          <h2 className="font-serif-italic text-4xl sm:text-6xl md:text-7xl tracking-wide text-white drop-shadow-md">
             EVERY SKILL BEGAN AS CURIOSITY.
           </h2>
           <p className="mt-4 font-mono text-xs tracking-[0.2em] uppercase text-white/40 max-w-lg">
@@ -59,7 +58,7 @@ export const Stage03Curiosity: React.FC = () => {
         </div>
 
         {/* ── Category Filter Pills ─────────────────────────── */}
-        <div className="mb-8 flex flex-wrap items-center gap-3">
+        <div className="mb-8 flex flex-wrap items-center gap-2 sm:gap-3">
           {CATEGORIES.map((cat) => {
             const catMeta = CATEGORY_META[cat] || CATEGORY_META["ALL"];
             const isActive = selectedCategory === cat;
@@ -70,7 +69,7 @@ export const Stage03Curiosity: React.FC = () => {
                 onMouseEnter={() => { setCursorText("FILTER"); setCursorColor(catMeta.color); }}
                 onMouseLeave={() => { setCursorText(null); }}
                 className={`
-                  relative px-5 py-2.5 rounded-full font-mono text-[11px] tracking-[0.25em] uppercase
+                  relative px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-full font-mono text-[10px] sm:text-[11px] tracking-[0.18em] sm:tracking-[0.25em] uppercase
                   transition-all duration-300 cursor-pointer
                   ${isActive
                     ? "text-black font-bold scale-105 shadow-lg"
@@ -107,7 +106,7 @@ export const Stage03Curiosity: React.FC = () => {
         </div>
 
         {/* ── Bottom telemetry strip ────────────────────────── */}
-        <div className="mt-16 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] tracking-[0.3em] uppercase text-white/25 border-t border-white/10 pt-8 select-none">
+        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 font-mono text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.3em] uppercase text-white/25 border-t border-white/10 pt-5 sm:pt-6 select-none">
           <span>THE JOURNEY OF THE SOUL</span>
           <span>STAGE 03 · {meta.label}</span>
           <span>LIVE ECOSYSTEM TELEMETRY</span>

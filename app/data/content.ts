@@ -149,7 +149,7 @@ export const SITE_CONTENT = {
     },
     {
       id: "legacy",
-      number: "09",
+      number: "07",
       name: "LEGACY",
       label: "[ CONTACT ]",
       title: "Returning to the Infinite",
@@ -662,7 +662,7 @@ export const SITE_CONTENT = {
     closingLine: "Let's create something worth becoming.",
     subline: "I am currently accepting select creative commissions, technical advisory roles, and collaborative art projects for 2026 and beyond.",
     contact: {
-      email: "yashnimse92@gmail.com",
+      email: "yash@devally.in",
       phone: "+91 8097310988",
       location: "Mumbai / Global Remote",
       resumeUrl: "/resume.pdf"
@@ -671,7 +671,8 @@ export const SITE_CONTENT = {
       { name: "GITHUB", url: "https://github.com/Prg-Yash" },
       { name: "LINKEDIN", url: "https://linkedin.com/in/yashnimse" },
       { name: "LEETCODE", url: "https://leetcode.com/u/yashnimse92/" },
-      { name: "INSTAGRAM", url: "https://instagram.com/yash.nimse.92/" }
+      { name: "INSTAGRAM", url: "https://instagram.com/yash.nimse.92/" },
+      { name: "X", url: "https://x.com/yashnimse92" }
     ],
     copyright: "© 2026 THE JOURNEY OF THE SOUL. CRAFTED WITH CODE, LIGHT, AND PATIENCE."
   }

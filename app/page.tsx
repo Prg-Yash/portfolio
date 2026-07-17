@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 import { useSmoothScroll } from "./hooks/useSmoothScroll";
 
 // UI Components
-import { LoadingScreen } from "./components/ui/LoadingScreen";
+import { Preloader } from "./components/preloader/Preloader";
 import { CustomCursor } from "./components/ui/CustomCursor";
 import { ProgressIndicator } from "./components/ui/ProgressIndicator";
 import { SectionIndicator } from "./components/ui/SectionIndicator";
@@ -25,6 +25,7 @@ import { Stage06Failure } from "./components/stages/Stage06Failure";
 import { Stage07Transform } from "./components/stages/Stage07Transform";
 import { Stage08Wisdom } from "./components/stages/Stage08Wisdom";
 import { Stage09Legacy } from "./components/stages/Stage09Legacy";
+import { CosmicFooter } from "./components/ui/CosmicFooter";
 
 export default function Home() {
   const mainRef = useRef<HTMLElement | null>(null);
@@ -38,7 +39,7 @@ export default function Home() {
       className="relative flex min-h-screen flex-col w-full bg-[#1d1d1d] overflow-x-hidden selection:bg-white/20"
     >
       {/* UI Overlays (Commented out heavy visual/interactive overlays to ensure 100% zero lag) */}
-      <LoadingScreen />
+      <Preloader />
       {/* <FilmGrain /> */}
       {/* <CustomCursor /> */}
       {/* <AudioDrone /> */}
@@ -61,6 +62,9 @@ export default function Home() {
         <Stage08Wisdom />*/}
         <Stage09Legacy />
       </div>
+
+      {/* ── Cosmic Footer ───────────────────────────────────────── */}
+      <CosmicFooter />
     </main>
   );
 }

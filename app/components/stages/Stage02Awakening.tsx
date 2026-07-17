@@ -20,6 +20,14 @@ export const Stage02Awakening: React.FC = () => {
     if (!container || !textEl || !subEl) return;
 
     const words = textEl.querySelectorAll(".word-span");
+    const contentEl = container.querySelector(".stage-content") as HTMLElement;
+
+    // Calculate how much the content height exceeds the viewport height
+    const calculateOverflow = () => {
+      if (!contentEl) return 0;
+      const totalHeight = contentEl.scrollHeight + 80;
+      return Math.max(0, totalHeight - window.innerHeight);
+    };
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -73,6 +81,20 @@ export const Stage02Awakening: React.FC = () => {
       "-=1.2"
     );
 
+    // If content exceeds window height, smoothly pan upward across the entire scrub duration
+    // so every single word and the stats block gracefully rise into full view before pin release!
+    if (contentEl) {
+      tl.to(
+        contentEl,
+        {
+          y: () => -calculateOverflow(),
+          ease: "none",
+          duration: tl.duration() || 3.5,
+        },
+        0
+      );
+    }
+
     return () => {
       ScrollTrigger.getAll().forEach((st) => {
         if (st.trigger === container) st.kill();
@@ -87,16 +109,16 @@ export const Stage02Awakening: React.FC = () => {
       <section
         ref={containerRef}
         id="stage-1"
-      className="relative flex min-h-screen w-full flex-col items-center justify-center py-24 z-20 overflow-hidden perspective-[1000px]"
+      className="relative flex min-h-screen w-full flex-col items-center justify-center py-10 sm:py-16 z-20 overflow-hidden perspective-[1000px]"
     >
       {/* Cinematic Volumetric Light Dawn Aura (No Blurry Shards!) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] sm:w-[1000px] h-[500px] sm:h-[700px] bg-[radial-gradient(ellipse_at_center,rgba(255,196,144,0.12)_0%,rgba(255,196,144,0.03)_45%,transparent_80%)] blur-3xl animate-[pulse_8s_ease-in-out_infinite]" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-5xl text-center sm:text-left px-6 sm:px-12">
+      <div className="stage-content relative z-10 mx-auto max-w-5xl text-center sm:text-left px-6 sm:px-12 will-change-transform">
         {/* Stage Header */}
-        <div className="mb-12 flex items-center justify-center sm:justify-start gap-4">
+        <div className="mb-6 sm:mb-8 flex items-center justify-center sm:justify-start gap-4">
           <span className="font-mono text-xs font-bold tracking-[0.3em] text-[#ffc490] animate-pulse">
             02 / AWAKENING
           </span>
@@ -109,13 +131,13 @@ export const Stage02Awakening: React.FC = () => {
         {/* 3D Kinetic Scrubbed Statement */}
         <p
           ref={textRef}
-          className="font-serif-italic text-2xl sm:text-3xl md:text-4xl lg:text-[2.25rem] leading-[1.5] sm:leading-[1.45] tracking-wide text-white select-none"
+          className="font-serif-italic text-lg sm:text-2xl md:text-3xl lg:text-[1.8rem] leading-[1.45] sm:leading-[1.4] tracking-wide text-white select-none"
           style={{ transformStyle: "preserve-3d" }}
         >
           {statementWords.map((word, idx) => (
             <span
               key={idx}
-              className="word-span inline-block mr-2 sm:mr-3 mb-1 sm:mb-2 transition-all duration-300 hover:text-[#ffc490] hover:-translate-y-1 hover:scale-105 hover:drop-shadow-[0_0_15px_rgba(255,196,144,0.8)] cursor-default select-none"
+              className="word-span inline-block mr-1.5 sm:mr-2.5 mb-0 sm:mb-0.5 transition-all duration-300 hover:text-[#ffc490] hover:-translate-y-1 hover:scale-105 hover:drop-shadow-[0_0_15px_rgba(255,196,144,0.8)] cursor-default select-none"
               style={{ transformStyle: "preserve-3d" }}
             >
               {word}
@@ -126,18 +148,18 @@ export const Stage02Awakening: React.FC = () => {
         {/* Editorial Stats Row (No Boxed Cards!) */}
         <div
           ref={subRef}
-          className="mt-16 sm:mt-24 grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16 border-t border-white/15 pt-12 sm:pt-16 text-left"
+          className="mt-8 sm:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-10 border-t border-white/15 pt-6 sm:pt-10 text-left"
         >
           {/* Stat 01 */}
           <div className="group flex flex-col justify-between">
             <div>
-              <span className="font-mono text-[11px] tracking-[0.25em] text-[#ffc490]/80 uppercase block mb-3">
+              <span className="font-mono text-[11px] tracking-[0.25em] text-[#ffc490]/80 uppercase block mb-2">
                 01 — EXPERIENCE
               </span>
-              <div className="font-serif-italic text-6xl sm:text-7xl md:text-8xl font-light tracking-tight text-white mb-4 group-hover:text-[#ffc490] transition-colors duration-500 select-none">
+              <div className="font-serif-italic text-5xl sm:text-6xl md:text-7xl font-light tracking-tight text-white mb-2 group-hover:text-[#ffc490] transition-colors duration-500 select-none">
                 5+
               </div>
-              <h3 className="font-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold text-white/90 mb-3">
+              <h3 className="font-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold text-white/90">
                 YEARS EXPERIENCE
               </h3>
               {/* <p className="font-sans text-xs sm:text-sm text-white/60 leading-relaxed font-light max-w-xs">
@@ -147,15 +169,15 @@ export const Stage02Awakening: React.FC = () => {
           </div>
 
           {/* Stat 02 */}
-          <div className="group flex flex-col justify-between md:border-l md:border-white/10 md:pl-12 sm:pl-16">
+          <div className="group flex flex-col justify-between md:border-l md:border-white/10 pl-0 md:pl-10">
             <div>
-              <span className="font-mono text-[11px] tracking-[0.25em] text-[#ffc490]/80 uppercase block mb-3">
+              <span className="font-mono text-[11px] tracking-[0.25em] text-[#ffc490]/80 uppercase block mb-2">
                 02 — TRACK RECORD
               </span>
-              <div className="font-serif-italic text-6xl sm:text-7xl md:text-8xl font-light tracking-tight text-white mb-4 group-hover:text-[#ffc490] transition-colors duration-500 select-none">
+              <div className="font-serif-italic text-5xl sm:text-6xl md:text-7xl font-light tracking-tight text-white mb-2 group-hover:text-[#ffc490] transition-colors duration-500 select-none">
                 25+
               </div>
-              <h3 className="font-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold text-white/90 mb-3">
+              <h3 className="font-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold text-white/90">
                 CLIENT PROJECTS
               </h3>
               {/* <p className="font-sans text-xs sm:text-sm text-white/60 leading-relaxed font-light max-w-xs">
@@ -165,15 +187,15 @@ export const Stage02Awakening: React.FC = () => {
           </div>
 
           {/* Stat 03 */}
-          <div className="group flex flex-col justify-between md:border-l md:border-white/10 md:pl-12 sm:pl-16">
+          <div className="group flex flex-col justify-between md:border-l md:border-white/10 pl-0 md:pl-10">
             <div>
-              <span className="font-mono text-[11px] tracking-[0.25em] text-[#ffc490]/80 uppercase block mb-3">
+              <span className="font-mono text-[11px] tracking-[0.25em] text-[#ffc490]/80 uppercase block mb-2">
                 03 — EXCELLENCE
               </span>
-              <div className="font-serif-italic text-6xl sm:text-7xl md:text-8xl font-light tracking-tight text-white mb-4 group-hover:text-[#ffc490] transition-colors duration-500 select-none">
+              <div className="font-serif-italic text-5xl sm:text-6xl md:text-7xl font-light tracking-tight text-white mb-2 group-hover:text-[#ffc490] transition-colors duration-500 select-none">
                 5x
               </div>
-              <h3 className="font-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold text-white/90 mb-3">
+              <h3 className="font-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold text-white/90">
                 HACKATHON WINNER
               </h3>
               {/* <p className="font-sans text-xs sm:text-sm text-white/60 leading-relaxed font-light max-w-xs">
@@ -205,7 +227,7 @@ export const Stage02Awakening: React.FC = () => {
       </section>
 
       {/* Standalone Full-Width Alive Stardust River (Outside Pinned Section to prevent GSAP overlap & lag!) */}
-      <div className="relative z-10 w-full pt-0 pb-8 sm:pb-12 bg-transparent -mt-6 sm:-mt-10">
+      <div className="relative z-10 w-full pt-0 pb-0 sm:pb-2 bg-transparent -mt-6 sm:-mt-10">
         <StardustRiver />
       </div>
     </>

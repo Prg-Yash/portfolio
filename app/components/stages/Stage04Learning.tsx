@@ -148,14 +148,8 @@ const EraPanel: React.FC<{ era: MilestoneEra; items: TimelineMilestone[] }> = ({
 
   return (
     <div
-      className="era-panel flex-shrink-0 w-screen h-full flex flex-col"
+      className="era-panel flex-shrink-0 w-screen h-full flex flex-col pt-14 sm:pt-16 pb-8 sm:pb-10 px-5 sm:px-12 lg:pl-16 lg:pr-20"
       data-era={era}
-      style={{
-        paddingTop: SAFE.top,
-        paddingBottom: SAFE.bottom,
-        paddingLeft: SAFE.left,
-        paddingRight: SAFE.right,
-      }}
     >
       {/* ── Era header ──────────────────────────────────────────── */}
       <div className="era-header flex items-end justify-between mb-6 flex-shrink-0 pb-4 border-b" style={{ borderColor: `${cfg.color}12` }}>
@@ -213,7 +207,7 @@ const EraPanel: React.FC<{ era: MilestoneEra; items: TimelineMilestone[] }> = ({
 
       {/* ── Milestone card grid ──────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto">
-        <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 pb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 pb-4">
           {items.map((item) => (
             <Card key={item.year + item.title} item={item} />
           ))}

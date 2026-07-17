@@ -130,7 +130,7 @@ export const Stage09Legacy: React.FC = () => {
       ref={containerRef}
       id="stage-8"
       className="relative w-full z-20 overflow-hidden bg-transparent"
-      style={{ paddingTop: "120px", paddingBottom: "100px" }}
+      style={{ paddingTop: "140px", paddingBottom: "100px" }}
     >
       {/* Ambient golden portal glow */}
       <div
@@ -141,13 +141,13 @@ export const Stage09Legacy: React.FC = () => {
       />
 
       <div className="mx-auto w-full max-w-6xl px-6 sm:px-12 relative z-10">
-        
+
         {/* ── Section Header ─────────────────────────────────────────── */}
         <div className="mb-16 sm:mb-24 text-center sm:text-left">
           <div className="inline-flex items-center gap-4 mb-4">
             <span className="font-mono text-xs font-bold tracking-[0.35em] text-[#ffd890] animate-pulse flex items-center gap-2">
               <Radio className="w-3.5 h-3.5 inline text-[#ffd890]" />
-              09 / LEGACY
+              07 / LEGACY
             </span>
             <div className="h-[1px] w-16 bg-gradient-to-r from-[#ffd890] to-transparent" />
             <span className="font-mono text-xs tracking-[0.2em] uppercase text-white/35">
@@ -164,13 +164,13 @@ export const Stage09Legacy: React.FC = () => {
 
         {/* ── Interactive GSAP Form vs Social Footprint Grid ─────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          
+
           {/* Left 7 cols: The Astral Transmission Form (Zero Boxy Inputs!) */}
           <div className="lg:col-span-7 relative min-h-[520px]">
-            
+
             {!isSubmitted ? (
               <form ref={formRef} onSubmit={handleSubmit} className="space-y-12">
-                
+
                 {/* Field 1: Identification */}
                 <div className="form-field-anim relative group">
                   <label className="block font-mono text-xs font-bold tracking-[0.3em] text-[#ffd890] uppercase mb-3">
@@ -249,11 +249,10 @@ export const Stage09Legacy: React.FC = () => {
                       setCursorColor("#ffd890");
                     }}
                     onMouseLeave={() => setCursorText(null)}
-                    className={`group/btn relative w-full sm:w-auto inline-flex items-center justify-center gap-4 rounded-full border border-[#ffd890] bg-[#ffd890] px-12 py-6 font-mono text-sm font-bold tracking-[0.3em] uppercase text-black transition-all duration-500 ${
-                      isSubmitting
-                        ? "opacity-60 cursor-not-allowed animate-pulse"
-                        : "hover:bg-white hover:border-white hover:scale-105 shadow-[0_0_40px_rgba(255,216,144,0.3)] cursor-pointer"
-                    } overflow-hidden`}
+                    className={`group/btn relative w-full sm:w-auto inline-flex items-center justify-center gap-4 rounded-full border border-[#ffd890] bg-[#ffd890] px-12 py-6 font-mono text-sm font-bold tracking-[0.3em] uppercase text-black transition-all duration-500 ${isSubmitting
+                      ? "opacity-60 cursor-not-allowed animate-pulse"
+                      : "hover:bg-white hover:border-white hover:scale-105 shadow-[0_0_40px_rgba(255,216,144,0.3)] cursor-pointer"
+                      } overflow-hidden`}
                   >
                     <span className="relative z-10">
                       {isSubmitting ? "TRANSMITTING SIGNAL..." : "INITIATE TRANSMISSION ✦"}
@@ -293,7 +292,7 @@ export const Stage09Legacy: React.FC = () => {
 
           {/* Right 5 cols: Direct Email Copy & Digital Footprint ─────── */}
           <div className="lg:col-span-5 space-y-10">
-            
+
             {/* Direct Email Transmission Box */}
             <div className="form-field-anim rounded-3xl border border-white/15 bg-black/60 p-8 sm:p-10 hover:border-[#ffd890]/40 transition-all duration-500">
               <span className="block font-mono text-xs tracking-[0.25em] text-[#ffd890] uppercase font-bold mb-3">
@@ -310,7 +309,7 @@ export const Stage09Legacy: React.FC = () => {
                   setCursorColor("#ffd890");
                 }}
                 onMouseLeave={() => setCursorText(null)}
-                className="w-full flex items-center justify-between rounded-2xl border border-white/20 bg-black/60 px-6 py-4 font-mono text-xs sm:text-sm tracking-[0.15em] text-white hover:border-[#ffd890] transition-all duration-300 group/btn cursor-pointer"
+                className="w-full flex items-center justify-between rounded-2xl border border-white/20 bg-black/60 px-4 sm:px-6 py-3 sm:py-4 font-mono text-[11px] sm:text-sm tracking-[0.15em] text-white hover:border-[#ffd890] transition-all duration-300 group/btn cursor-pointer"
               >
                 <span className="truncate mr-4 text-[#ffd890] font-bold">
                   {SITE_CONTENT.legacy.contact.email}

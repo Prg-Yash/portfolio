@@ -75,7 +75,7 @@ export const Stage05Creation: React.FC = () => {
       ref={containerRef}
       id="stage-4"
       className="relative min-h-screen w-full z-20 overflow-hidden"
-      style={{ paddingTop: "140px", paddingBottom: "120px" }}
+      style={{ paddingTop: "170px", paddingBottom: "50px" }}
     >
       {/* Subtle ambient cosmic gradient behind the archive */}
       <div
@@ -86,7 +86,7 @@ export const Stage05Creation: React.FC = () => {
       />
 
       <div className="mx-auto w-full max-w-6xl px-6 sm:px-12 relative z-10">
-        
+
         {/* ── Section Header & Text Filter Bar ───────────────────────── */}
         <div className="mb-16 sm:mb-24">
           <div className="flex items-center gap-4 mb-4">
@@ -98,7 +98,7 @@ export const Stage05Creation: React.FC = () => {
               THE ARCHIVE OF MANIFESTATION
             </span>
           </div>
-          
+
           <h2 className="font-serif-italic text-5xl sm:text-7xl tracking-wide text-white drop-shadow-md mb-8">
             Selected Works
           </h2>
@@ -112,11 +112,10 @@ export const Stage05Creation: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setActiveFilter(cat)}
-                  className={`relative py-1 transition-all duration-300 ${
-                    isActive
-                      ? "text-[#ffc490] font-bold"
-                      : "text-white/40 hover:text-white"
-                  }`}
+                  className={`relative py-1 transition-all duration-300 ${isActive
+                    ? "text-[#ffc490] font-bold"
+                    : "text-white/40 hover:text-white"
+                    }`}
                 >
                   {cat}
                   {isActive && (
@@ -140,7 +139,7 @@ export const Stage05Creation: React.FC = () => {
           ) : (
             displayedProjects.map((project, idx) => {
               const isOpen = openId === project.id;
-              
+
               return (
                 <div
                   key={project.id}
@@ -157,22 +156,20 @@ export const Stage05Creation: React.FC = () => {
                     className="w-full py-8 sm:py-12 flex flex-col md:flex-row md:items-baseline justify-between gap-4 text-left focus:outline-none"
                   >
                     {/* Left: Ordinal + Title */}
-                    <div className="flex items-baseline gap-6 sm:gap-10 max-w-4xl">
+                    <div className="flex items-baseline gap-3 sm:gap-10 max-w-4xl">
                       <span
-                        className={`font-mono text-xs sm:text-sm tracking-[0.3em] font-bold transition-colors duration-500 shrink-0 ${
-                          isOpen ? "text-[#ffc490]" : "text-white/40 group-hover:text-[#ffc490]"
-                        }`}
+                        className={`font-mono text-xs sm:text-sm tracking-[0.3em] font-bold transition-colors duration-500 shrink-0 ${isOpen ? "text-[#ffc490]" : "text-white/40 group-hover:text-[#ffc490]"
+                          }`}
                       >
                         {String(idx + 1).padStart(2, "0")} //
                       </span>
-                      
+
                       <div>
                         <h3
-                          className={`font-serif-italic text-3xl sm:text-5xl lg:text-6xl transition-all duration-500 leading-tight ${
-                            isOpen
-                              ? "text-[#ffc490] translate-x-3 sm:translate-x-6 drop-shadow-[0_0_20px_rgba(255,196,144,0.3)]"
-                              : "text-white/90 group-hover:text-white group-hover:translate-x-3"
-                          }`}
+                          className={`font-serif-italic text-3xl sm:text-5xl lg:text-6xl transition-all duration-500 leading-tight ${isOpen
+                            ? "text-[#ffc490] translate-x-3 sm:translate-x-6 drop-shadow-[0_0_20px_rgba(255,196,144,0.3)]"
+                            : "text-white/90 group-hover:text-white group-hover:translate-x-3"
+                            }`}
                         >
                           {project.title}
                         </h3>
@@ -180,21 +177,20 @@ export const Stage05Creation: React.FC = () => {
                     </div>
 
                     {/* Right: Subtitle + Year + Indicator */}
-                    <div className="flex items-center justify-between md:justify-end gap-6 sm:gap-10 shrink-0 pl-12 md:pl-0">
+                    <div className="flex items-center justify-between md:justify-end gap-3 sm:gap-10 shrink-0 pl-4 sm:pl-12 md:pl-0">
                       <span className="font-mono text-[11px] tracking-[0.2em] text-white/40 uppercase hidden sm:block">
                         {project.subtitle}
                       </span>
                       <span className="font-mono text-xs tracking-[0.2em] text-white/60">
                         {project.year}
                       </span>
-                      
+
                       {/* Animated indicator button */}
                       <div
-                        className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-500 ${
-                          isOpen
-                            ? "border-[#ffc490] bg-[#ffc490] text-black shadow-[0_0_20px_rgba(255,196,144,0.5)] rotate-45"
-                            : "border-white/20 text-white group-hover:border-[#ffc490] group-hover:text-[#ffc490]"
-                        }`}
+                        className={`w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-500 ${isOpen
+                          ? "border-[#ffc490] bg-[#ffc490] text-black shadow-[0_0_20px_rgba(255,196,144,0.5)] rotate-45"
+                          : "border-white/20 text-white group-hover:border-[#ffc490] group-hover:text-[#ffc490]"
+                          }`}
                       >
                         <ArrowUpRight className="w-5 h-5 transition-transform" />
                       </div>
@@ -203,13 +199,12 @@ export const Stage05Creation: React.FC = () => {
 
                   {/* Accordion Expandable Showcase Area (60FPS Grid Reveal) */}
                   <div
-                    className={`grid transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                      isOpen ? "grid-rows-[1fr] opacity-100 pb-12 sm:pb-16" : "grid-rows-[0fr] opacity-0 pb-0"
-                    }`}
+                    className={`grid transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? "grid-rows-[1fr] opacity-100 pb-12 sm:pb-16" : "grid-rows-[0fr] opacity-0 pb-0"
+                      }`}
                   >
                     <div className="overflow-hidden">
                       <div className="pt-2 pl-2 sm:pl-16">
-                        
+
                         {/* Widescreen Cinematic Image Banner */}
                         <a
                           href={project.link}
@@ -228,9 +223,9 @@ export const Stage05Creation: React.FC = () => {
                           <div className="absolute inset-0 bg-radial-vignette opacity-50" />
 
                           {/* Inline Launch Badge on Image */}
-                          <div className="absolute bottom-6 right-6 bg-black/80 backdrop-blur-md border border-[#ffc490]/50 rounded-full px-6 py-2.5 flex items-center gap-2.5 shadow-2xl transition-transform duration-300 group-hover/img:scale-105">
+                          <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 bg-black/80 backdrop-blur-md border border-[#ffc490]/50 rounded-full px-3 py-1.5 sm:px-6 sm:py-2.5 flex items-center gap-1.5 sm:gap-2.5 shadow-2xl transition-transform duration-300 group-hover/img:scale-105">
                             <Disc className="w-4 h-4 text-[#ffc490] animate-spin" style={{ animationDuration: "8s" }} />
-                            <span className="font-mono text-xs tracking-[0.25em] text-white font-bold">
+                            <span className="font-mono text-[9px] sm:text-xs tracking-[0.15em] sm:tracking-[0.25em] text-white font-bold">
                               LAUNCH EXHIBITION
                             </span>
                             <ExternalLink className="w-3.5 h-3.5 text-[#ffc490]" />
@@ -239,7 +234,7 @@ export const Stage05Creation: React.FC = () => {
 
                         {/* Project Details Grid below Image */}
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-                          
+
                           {/* Left 7 cols: Description & Story */}
                           <div className="lg:col-span-7 space-y-6">
                             <h4 className="font-mono text-xs tracking-[0.25em] text-[#ffc490] uppercase">
@@ -248,7 +243,7 @@ export const Stage05Creation: React.FC = () => {
                             <p className="font-sans text-base sm:text-lg leading-relaxed text-white/80 max-w-2xl">
                               {project.description}
                             </p>
-                            
+
                             {/* Tech Stack Pills */}
                             <div className="pt-4">
                               <span className="block font-mono text-[10px] tracking-[0.25em] text-white/40 uppercase mb-3">

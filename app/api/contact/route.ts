@@ -39,7 +39,7 @@ Phone: ${phone || "Not provided"}
 ${message}
 
 ──────────────────────────────────────────────────────
-Sent from Portfolio Telemetry Portal (Stage 09 Legacy)
+Sent from Portfolio Telemetry Portal (Stage 07 Legacy)
       `,
       html: `
         <div style="font-family: monospace, sans-serif; max-width: 600px; margin: 0 auto; background-color: #111; color: #eee; padding: 30px; border: 1px solid #333; border-radius: 12px;">
@@ -58,7 +58,7 @@ Sent from Portfolio Telemetry Portal (Stage 09 Legacy)
           </div>
 
           <div style="margin-top: 30px; border-top: 1px solid #333; pt-15; font-size: 11px; color: #666; text-align: center; letter-spacing: 1px;">
-            SENT FROM PORTFOLIO 2.0 TELEMETRY PORTAL · STAGE 09 LEGACY
+            SENT FROM PORTFOLIO 2.0 TELEMETRY PORTAL · STAGE 07 LEGACY
           </div>
         </div>
       `,

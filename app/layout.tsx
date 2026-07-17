@@ -59,7 +59,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className="min-h-full flex flex-col selection:bg-white/20 selection:text-white"
+        className="min-h-full flex flex-col selection:bg-white/20 selection:text-white overflow-x-hidden"
       >
         <LenisScrollProvider>
           <SoulProvider>{children}</SoulProvider>

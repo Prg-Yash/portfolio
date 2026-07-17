@@ -22,6 +22,8 @@ interface StarNode {
   description: string;
   opacity: number;
   targetOpacity: number;
+  isDragged?: boolean;
+  customAnchor?: { x: number; y: number } | null;
 }
 
 // All 12 skill nodes with their metadata
@@ -129,8 +131,21 @@ export const ConstellationSkillMap: React.FC<ConstellationSkillMapProps> = ({
   const particlesRef = useRef<EnergyParticle[]>([]);
   const ripplesRef   = useRef<Ripple[]>([]);
 
+  const draggedNodeRef = useRef<StarNode | null>(null);
+  const hasDraggedRef = useRef<boolean>(false);
+  const dragOffsetRef = useRef<{ dx: number; dy: number }>({ dx: 0, dy: 0 });
+
   const [selectedNode, setSelectedNode] = useState<StarNode | null>(null);
   const [panelVisible, setPanelVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // ──────────────────────────────────────────────
   // Compute geometric orbits whenever category changes
@@ -144,21 +159,27 @@ export const ConstellationSkillMap: React.FC<ConstellationSkillMapProps> = ({
     const inactive = nodes.filter((n) => !active.includes(n));
     const count = active.length;
 
-    // Inactive nodes fade out fully
-    inactive.forEach((n) => { n.targetOpacity = 0.06; });
+    // Reset dragged custom anchors on filter change so active nodes form clean orbital rings without overlap
+    nodes.forEach((n) => {
+      n.customAnchor = null;
+      n.isDragged = false;
+    });
 
-    // Active nodes re-arrange into an even polygon / galactic orbit
+    // Inactive nodes fade out completely to 0 so they vanish and never overlap active nodes
+    inactive.forEach((n) => { n.targetOpacity = 0; });
+
+    // Active nodes re-arrange into multi-ring orbital layouts to prevent any overlap
     active.forEach((node, idx) => {
       const frac = idx / count;
       const baseAngle = frac * Math.PI * 2 - Math.PI / 2;
       let radius: number;
 
       if (selectedCategory === "ALL") {
-        // Spread in 2 rings for visual richness
-        radius = idx % 2 === 0 ? 310 : 420;
+        // Spread across 3 tightly contained rings (`180`, `275`, `370`) so outermost stars never touch top/bottom bounds
+        radius = idx % 3 === 0 ? 180 : idx % 3 === 1 ? 275 : 370;
       } else {
-        // Single compact polygon
-        radius = 240;
+        // When filtered (`6-9 nodes`), spread across 2 compact inner rings (`160`, `260`)
+        radius = idx % 2 === 0 ? 160 : 260;
       }
       node.baseAngle = baseAngle;
       node.orbitRadius = radius;
@@ -178,7 +199,11 @@ export const ConstellationSkillMap: React.FC<ConstellationSkillMapProps> = ({
     const resize = () => {
       dpr = window.devicePixelRatio || 1;
       width  = canvas.parentElement?.clientWidth  || window.innerWidth;
-      height = 600;
+      // Responsive canvas height: smaller on mobile so nodes fill the space
+      if (width < 480) height = 360;
+      else if (width < 768) height = 440;
+      else if (width < 1024) height = 520;
+      else height = 640;
       canvas.width  = width  * dpr;
       canvas.height = height * dpr;
       canvas.style.width  = `${width}px`;
@@ -214,7 +239,7 @@ export const ConstellationSkillMap: React.FC<ConstellationSkillMapProps> = ({
 
       const cx = width  / 2;
       const cy = height / 2;
-      const rs = Math.min(1.0, Math.max(0.55, width / 1200));
+      const rs = Math.min(1.0, Math.max(0.32, width / 1100));
 
       // ── 1. Ambient dust ──────────────────────────────────
       dust.forEach((d) => {
@@ -227,21 +252,36 @@ export const ConstellationSkillMap: React.FC<ConstellationSkillMapProps> = ({
         ctx.fill();
       });
 
-      // ── 2. Update positions with magnetic pull on hover ──
+      // ── 2. Update positions with orbital physics, magnetic pull, and collision avoidance ──
       nodesRef.current.forEach((node) => {
         node.opacity += (node.targetOpacity - node.opacity) * 0.07;
-        const angle = node.baseAngle + t * node.orbitSpeed;
-        let tx = cx + Math.cos(angle) * node.orbitRadius * rs;
-        let ty = cy + Math.sin(angle) * node.orbitRadius * rs * 0.60;
+        
+        if (node.isDragged) {
+          // Position handled directly in onMouseMove while dragging
+          return;
+        }
+
+        let tx: number, ty: number;
+        if (node.customAnchor) {
+          // Softly anchor around where user placed/dragged the node
+          const angle = node.baseAngle + t * (node.orbitSpeed * 0.3);
+          tx = node.customAnchor.x + Math.cos(angle) * 12;
+          ty = node.customAnchor.y + Math.sin(angle) * 12;
+        } else {
+          const angle = node.baseAngle + t * node.orbitSpeed;
+          tx = cx + Math.cos(angle) * node.orbitRadius * rs;
+          const vScale = selectedCategory === "ALL" ? 0.62 : 0.78;
+          ty = cy + Math.sin(angle) * node.orbitRadius * rs * vScale;
+        }
 
         // Magnetic pull: connected nodes drift toward hovered star
         const hov = hoverRef.current;
-        if (hov && hov.id !== node.id) {
+        if (hov && hov.id !== node.id && !draggedNodeRef.current) {
           const connectedToHover = LINKS.some(
             ([a, b]) => (a === hov.id && b === node.id) || (b === hov.id && a === node.id)
           );
           if (connectedToHover) {
-            const pullStr = 18 * rs; // px magnetic attraction
+            const pullStr = 22 * rs;
             const dx = hov.x - tx;
             const dy = hov.y - ty;
             const dist = Math.sqrt(dx * dx + dy * dy) || 1;
@@ -257,6 +297,37 @@ export const ConstellationSkillMap: React.FC<ConstellationSkillMapProps> = ({
         }
       });
 
+      // ── 2B. Real-time Repulsion Engine (Collision avoidance so nodes & labels never overlap!) ──
+      const activeNodes = nodesRef.current.filter((n) => n.opacity > 0.25);
+      for (let i = 0; i < activeNodes.length; i++) {
+        for (let j = i + 1; j < activeNodes.length; j++) {
+          const n1 = activeNodes[i];
+          const n2 = activeNodes[j];
+          if (n1.isDragged || n2.isDragged) continue;
+
+          const dx = n2.x - n1.x;
+          const dy = n2.y - n1.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const minDist = (n1.size + n2.size + 115) * rs;
+          if (dist < minDist) {
+            const push = (minDist - dist) * 0.06;
+            const nx = dx / dist;
+            const ny = dy / dist;
+            if (!n1.customAnchor) { n1.x -= nx * push; n1.y -= ny * push; }
+            if (!n2.customAnchor) { n2.x += nx * push; n2.y += ny * push; }
+          }
+        }
+      }
+
+      // ── 2C. Safety Bounding Box (Ensure NO node or label ever goes under top/bottom bars or outside canvas!) ──
+      const padTopBottom = 55;
+      const padLeftRight = 80;
+      nodesRef.current.forEach((node) => {
+        if (node.isDragged) return;
+        node.x = Math.max(padLeftRight, Math.min(width - padLeftRight, node.x));
+        node.y = Math.max(padTopBottom, Math.min(height - padTopBottom, node.y));
+      });
+
       // ── 3. Hover detection + spawn effects on new hover ──
       const hitNode = nodesRef.current.find((n) => {
         if (n.opacity < 0.15) return false;
@@ -265,8 +336,10 @@ export const ConstellationSkillMap: React.FC<ConstellationSkillMapProps> = ({
         return Math.sqrt(dx * dx + dy * dy) < 36;
       }) ?? null;
 
-      hoverRef.current = hitNode;
-      canvas.style.cursor = hitNode ? "pointer" : "crosshair";
+      if (!draggedNodeRef.current) {
+        hoverRef.current = hitNode;
+        canvas.style.cursor = hitNode ? "grab" : "crosshair";
+      }
 
       // Spawn ripple + energy particles when hover changes
       if (hitNode && hitNode.id !== prevHoverIdRef.current) {
@@ -425,13 +498,61 @@ export const ConstellationSkillMap: React.FC<ConstellationSkillMapProps> = ({
   // ──────────────────────────────────────────────
   // Mouse / click handlers
   // ──────────────────────────────────────────────
+  const onMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const mx = e.clientX - r.left;
+    const my = e.clientY - r.top;
+
+    const hit = nodesRef.current.find((n) => {
+      if (n.opacity < 0.15) return false;
+      const dx = n.x - mx;
+      const dy = n.y - my;
+      return Math.sqrt(dx * dx + dy * dy) < n.size + 20;
+    });
+
+    if (hit) {
+      draggedNodeRef.current = hit;
+      hit.isDragged = true;
+      hasDraggedRef.current = false;
+      dragOffsetRef.current = { dx: hit.x - mx, dy: hit.y - my };
+      if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
+    }
+  }, []);
+
   const onMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
-    mouseRef.current = { x: e.clientX - r.left, y: e.clientY - r.top };
+    const mx = e.clientX - r.left;
+    const my = e.clientY - r.top;
+    mouseRef.current = { x: mx, y: my };
+
+    if (draggedNodeRef.current) {
+      hasDraggedRef.current = true;
+      draggedNodeRef.current.x = mx + dragOffsetRef.current.dx;
+      draggedNodeRef.current.y = my + dragOffsetRef.current.dy;
+      draggedNodeRef.current.customAnchor = {
+        x: draggedNodeRef.current.x,
+        y: draggedNodeRef.current.y,
+      };
+      if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
+    }
+  }, []);
+
+  const onMouseUp = useCallback(() => {
+    if (draggedNodeRef.current) {
+      draggedNodeRef.current.isDragged = false;
+      draggedNodeRef.current = null;
+      if (canvasRef.current) {
+        canvasRef.current.style.cursor = hoverRef.current ? "grab" : "crosshair";
+      }
+    }
   }, []);
 
   const onMouseLeave = useCallback(() => {
     mouseRef.current = { x: -9999, y: -9999 };
+    if (draggedNodeRef.current) {
+      draggedNodeRef.current.isDragged = false;
+      draggedNodeRef.current = null;
+    }
   }, []);
 
   const closePanel = useCallback(() => {
@@ -440,6 +561,10 @@ export const ConstellationSkillMap: React.FC<ConstellationSkillMapProps> = ({
   }, []);
 
   const onClick = useCallback(() => {
+    if (hasDraggedRef.current) {
+      hasDraggedRef.current = false;
+      return;
+    }
     if (hoverRef.current) {
       setSelectedNode(hoverRef.current);
       setPanelVisible(true);
@@ -461,15 +586,95 @@ export const ConstellationSkillMap: React.FC<ConstellationSkillMapProps> = ({
 
   const catColor = selectedNode ? (CATEGORY_COLORS[selectedNode.category] ?? "#ffc490") : "#ffc490";
 
+  // ── Mobile Skill Grid (replaces canvas on small screens) ──────────────────
+  const mobileNodes = selectedCategory === "ALL"
+    ? ALL_NODES
+    : ALL_NODES.filter((n) => n.category === selectedCategory);
+
+  const mobileCategories = ["Frontend", "Backend", "AI & Automations", "Databases", "Tools"];
+
+  if (isMobile) {
+    return (
+      <div className={`relative w-full ${className}`}>
+        {selectedCategory === "ALL" ? (
+          // Show all categories grouped
+          <div className="space-y-8">
+            {mobileCategories.map((cat) => {
+              const catNodes = ALL_NODES.filter((n) => n.category === cat);
+              const color = CATEGORY_COLORS[cat] ?? "#ffc490";
+              return (
+                <div key={cat}>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-2 h-2 rounded-full" style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
+                    <span className="font-mono text-[10px] tracking-[0.3em] uppercase font-bold" style={{ color }}>
+                      {cat}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {catNodes.map((node) => (
+                      <div
+                        key={node.id}
+                        className="rounded-full border px-3 py-1.5 font-mono text-[10px] tracking-[0.15em] uppercase text-white/80"
+                        style={{
+                          borderColor: `${color}40`,
+                          background: `${color}08`,
+                        }}
+                      >
+                        {node.name}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          // Show single category as a grid with proficiency bars
+          <div className="space-y-3">
+            {mobileNodes.map((node) => {
+              const color = CATEGORY_COLORS[node.category] ?? "#ffc490";
+              return (
+                <div
+                  key={node.id}
+                  className="rounded-xl border p-4"
+                  style={{ borderColor: `${color}25`, background: `${color}06` }}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-mono text-xs tracking-[0.15em] text-white font-semibold uppercase">
+                      {node.name}
+                    </span>
+                    <span className="font-mono text-[10px] tracking-[0.2em]" style={{ color }}>
+                      {node.level}%
+                    </span>
+                  </div>
+                  <div className="h-1 w-full rounded-full bg-white/8 overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${node.level}%`,
+                        background: `linear-gradient(90deg, ${color}, ${color}80)`,
+                        boxShadow: `0 0 8px ${color}60`,
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className={`relative w-full ${className}`}>
       {/* Label bar */}
-      <div className="flex items-center justify-between px-1 mb-4 font-mono text-[10px] tracking-[0.28em] uppercase text-white/40 select-none">
-        <span>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 px-1 mb-6 font-mono text-[9px] sm:text-[10px] tracking-[0.2em] sm:tracking-[0.28em] uppercase text-white/40 select-none">
+        <span className="leading-relaxed">
           CELESTIAL SKILL CONSTELLATION
-          <span className="ml-3 text-[#ffc490]/70">[{selectedCategory}]</span>
+          <span className="ml-2 sm:ml-3 text-[#ffc490]/70 font-bold">[{selectedCategory}]</span>
         </span>
-        <span className="text-white/25">CLICK A STAR TO INSPECT · [ESC] TO CLOSE</span>
+        <span className="text-white/30 text-[8px] sm:text-[10px] leading-relaxed">DRAG STARS TO REARRANGE · CLICK TO INSPECT · [ESC] TO CLOSE</span>
       </div>
 
       {/* Canvas */}
@@ -477,8 +682,9 @@ export const ConstellationSkillMap: React.FC<ConstellationSkillMapProps> = ({
         <canvas
           ref={canvasRef}
           className="w-full select-none block"
-          style={{ width: "100%", height: "600px" }}
+          onMouseDown={onMouseDown}
           onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
           onMouseLeave={onMouseLeave}
           onClick={onClick}
         />
