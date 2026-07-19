@@ -23,7 +23,7 @@ import { cn } from "../../../lib/utils"
 
 const TRACK_WIDTH = 280; // 280px
 const THUMB_SIZE = 48; // 48px (h-12 w-12)
-const PADDING = 8; // 4px padding on each side
+const PADDING = 4; // 4px padding matches left-1
 const MAX_DRAG = TRACK_WIDTH - THUMB_SIZE - PADDING;
 const DRAG_CONSTRAINTS = { left: 0, right: MAX_DRAG }
 const DRAG_THRESHOLD = 0.85
@@ -132,6 +132,20 @@ export const SlideButton = forwardRef<HTMLButtonElement, SlideButtonProps>(
       dragX.set(newX)
     }
 
+    const handleThumbClick = () => {
+      // If it's currently dragging, don't trigger click behavior
+      if (completed || status !== "idle" || isDragging) return;
+      
+      // Visually slide the thumb to the right
+      dragX.set(DRAG_CONSTRAINTS.right);
+      
+      // Wait for the spring animation to complete before changing state
+      setTimeout(() => {
+        setCompleted(true);
+        onComplete();
+      }, 350); // 350ms perfectly matches the spring timing
+    }
+
     const adjustedWidth = useTransform(springX, (x) => x + THUMB_SIZE + PADDING)
     const textOpacity = useTransform(springX, [0, DRAG_CONSTRAINTS.right / 2], [1, 0])
 
@@ -148,7 +162,7 @@ export const SlideButton = forwardRef<HTMLButtonElement, SlideButtonProps>(
         {!completed && (
           <motion.div
             style={{ width: adjustedWidth }}
-            className="absolute inset-y-0 left-0 z-0 bg-[#ffd890]/20 backdrop-blur-sm"
+            className="absolute inset-y-0 left-0 z-0 bg-[#ffd890]/20 backdrop-blur-sm rounded-full"
           />
         )}
 
@@ -156,9 +170,9 @@ export const SlideButton = forwardRef<HTMLButtonElement, SlideButtonProps>(
         {!completed && (
           <motion.div
             style={{ opacity: textOpacity }}
-            className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none pl-12"
+            className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none pl-10"
           >
-            <span className="font-mono text-[10px] sm:text-xs font-bold tracking-[0.2em] text-white/50 uppercase">
+            <span className="font-mono text-[10px] sm:text-xs font-medium tracking-[0.25em] text-[#f5f0e8]/80 uppercase">
               SLIDE TO TRANSMIT
             </span>
           </motion.div>
@@ -177,19 +191,20 @@ export const SlideButton = forwardRef<HTMLButtonElement, SlideButtonProps>(
               onDragEnd={handleDragEnd}
               onDrag={handleDrag}
               style={{ x: springX }}
-              className="absolute left-1 z-10 flex cursor-grab items-center justify-center active:cursor-grabbing"
+              className="absolute left-1 z-10 flex !cursor-pointer items-center justify-center"
             >
               <button
                 ref={ref}
                 type="button"
                 disabled={status !== "idle"}
+                onClick={handleThumbClick}
                 {...props}
                 className={cn(
-                  "flex h-12 w-12 items-center justify-center rounded-full bg-[#ffd890] text-black shadow-[0_0_20px_rgba(255,216,144,0.4)] transition-transform",
-                  isDragging && "scale-105 shadow-[0_0_30px_rgba(255,216,144,0.6)]"
+                  "flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-[#ffd890] text-black shadow-[0_0_15px_rgba(255,216,144,0.3)] transition-transform",
+                  isDragging && "scale-105 shadow-[0_0_25px_rgba(255,216,144,0.5)]"
                 )}
               >
-                <Sparkles className="size-5" />
+                <SendHorizontal className="size-5 translate-x-[2px]" />
               </button>
             </motion.div>
           )}

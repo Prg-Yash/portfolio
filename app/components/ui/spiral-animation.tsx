@@ -1,261 +1,479 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 
-// ── Vector helpers ────────────────────────────────────────────────────────────
-class Vec2 {
+// 向量工具类
+class Vector2D {
     constructor(public x: number, public y: number) {}
+    
+    static random(min: number, max: number): number {
+        return min + Math.random() * (max - min)
+    }
 }
-class Vec3 {
+
+class Vector3D {
     constructor(public x: number, public y: number, public z: number) {}
-}
-
-// ── Math helpers ──────────────────────────────────────────────────────────────
-function ease(p: number, g: number): number {
-    return p < 0.5 ? 0.5 * Math.pow(2 * p, g) : 1 - 0.5 * Math.pow(2 * (1 - p), g)
-}
-function easeOutElastic(x: number): number {
-    if (x <= 0) return 0
-    if (x >= 1) return 1
-    return Math.pow(2, -8 * x) * Math.sin((x * 8 - 0.75) * ((2 * Math.PI) / 4.5)) + 1
-}
-function lerp(a: number, b: number, t: number): number { return a * (1 - t) + b * t }
-function clamp(v: number, lo: number, hi: number): number { return Math.min(Math.max(v, lo), hi) }
-function remap(v: number, a: number, b: number, c: number, d: number): number {
-    return c + (d - c) * ((v - a) / (b - a))
-}
-
-// ── Star ─────────────────────────────────────────────────────────────────────
-class Star {
-    angle: number; distance: number; dx: number; dy: number
-    spiralLoc: number; z: number; sw: number
-    rotDir: number; expRate: number; finalScale: number
-
-    constructor(cameraZ: number, travelDist: number) {
-        this.angle = Math.random() * Math.PI * 2
-        this.distance = 30 * Math.random() + 15
-        this.rotDir = Math.random() > 0.5 ? 1 : -1
-        this.expRate = 1.2 + Math.random() * 0.8
-        this.finalScale = 0.7 + Math.random() * 0.6
-        this.dx = this.distance * Math.cos(this.angle)
-        this.dy = this.distance * Math.sin(this.angle)
-        this.spiralLoc = (1 - Math.pow(1 - Math.random(), 3.0)) / 1.3
-        this.z = lerp(
-            lerp(0.5 * cameraZ, travelDist + cameraZ, Math.random()),
-            travelDist / 2,
-            0.3 * this.spiralLoc
-        )
-        this.sw = Math.pow(Math.random(), 2.0)
+    
+    static random(min: number, max: number): number {
+        return min + Math.random() * (max - min)
     }
 }
 
-// ── Engine ────────────────────────────────────────────────────────────────────
-class SpiralEngine {
-    private ctx: CanvasRenderingContext2D
-    private w: number; private h: number
-    private stars: Star[] = []
+// 动画控制器
+class AnimationController {
+    private timeline: gsap.core.Timeline
     private time = 0
-    private ticker: gsap.Ticker | null = null
-
-    // Tunable constants – reduced star count for 60fps
-    private readonly N_STARS     = 1500
-    private readonly TRAIL_LEN   = 60
-    private readonly CAMERA_Z    = -400
-    private readonly TRAVEL_DIST = 3400
-    private readonly DOT_Y_OFF   = 28
-    private readonly VIEW_ZOOM   = 100
-    private readonly CHANGE_T    = 0.32
-    private readonly CYCLE_DUR   = 15   // seconds for one full cycle
-
-    constructor(ctx: CanvasRenderingContext2D, w: number, h: number) {
+    private canvas: HTMLCanvasElement
+    private ctx: CanvasRenderingContext2D
+    private dpr: number
+    private width: number
+    private height: number
+    private isDesktop: boolean
+    private stars: Star[] = []
+    
+    // 常量
+    private readonly changeEventTime = 0.32
+    private readonly cameraZ = -400
+    private readonly cameraTravelDistance = 3400
+    private readonly startDotYOffset = 28
+    private readonly viewZoom = 100
+    private readonly numberOfStars = 5000
+    private readonly trailLength = 80
+    
+    constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, dpr: number, width: number, height: number, isDesktop: boolean) {
+        this.canvas = canvas
         this.ctx = ctx
-        this.w = w
-        this.h = h
-        this.buildStars()
-        this.start()
+        this.dpr = dpr
+        this.width = width
+        this.height = height
+        this.isDesktop = isDesktop
+        this.timeline = gsap.timeline({ repeat: -1 })
+        
+        // 初始化
+        this.setupRandomGenerator()
+        this.createStars()
+        this.setupTimeline()
     }
-
-    private buildStars() {
-        // Seeded random for consistent star layout
-        const orig = Math.random
-        let seed = 1234
-        Math.random = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280 }
-        this.stars = Array.from({ length: this.N_STARS }, () => new Star(this.CAMERA_Z, this.TRAVEL_DIST))
-        Math.random = orig
+    
+    // 设置随机数生成器
+    private setupRandomGenerator() {
+        const originalRandom = Math.random
+        const customRandom = () => {
+            let seed = 1234
+            return () => {
+                seed = (seed * 9301 + 49297) % 233280
+                return seed / 233280
+            }
+        }
+        
+        Math.random = customRandom()
+        this.createStars()
+        Math.random = originalRandom
     }
-
-    private spiralPath(p: number): Vec2 {
-        p = clamp(1.2 * p, 0, 1)
-        p = ease(p, 1.8)
-        const turns = 6
-        const theta = 2 * Math.PI * turns * Math.sqrt(p)
+    
+    // 创建星星
+    private createStars() {
+        for (let i = 0; i < this.numberOfStars; i++) {
+            this.stars.push(new Star(this.cameraZ, this.cameraTravelDistance))
+        }
+    }
+    
+    // 设置动画时间线
+    private setupTimeline() {
+        this.timeline
+            .to(this, {
+                time: 1,
+                duration: 15,
+                repeat: -1,
+                ease: "none",
+                onUpdate: () => this.render()
+            })
+    }
+    
+    // 缓动函数
+    public ease(p: number, g: number): number {
+        if (p < 0.5) 
+            return 0.5 * Math.pow(2 * p, g)
+        else
+            return 1 - 0.5 * Math.pow(2 * (1 - p), g)
+    }
+    
+    // 弹性缓动
+    public easeOutElastic(x: number): number {
+        const c4 = (2 * Math.PI) / 4.5
+        if (x <= 0) return 0
+        if (x >= 1) return 1
+        return Math.pow(2, -8 * x) * Math.sin((x * 8 - 0.75) * c4) + 1
+    }
+    
+    // 映射函数
+    public map(value: number, start1: number, stop1: number, start2: number, stop2: number): number {
+        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1))
+    }
+    
+    // 限制范围
+    public constrain(value: number, min: number, max: number): number {
+        return Math.min(Math.max(value, min), max)
+    }
+    
+    // 线性插值
+    public lerp(start: number, end: number, t: number): number {
+        return start * (1 - t) + end * t
+    }
+    
+    // 螺旋路径
+    public spiralPath(p: number): Vector2D {
+        p = this.constrain(1.2 * p, 0, 1)
+        p = this.ease(p, 1.8)
+        const numberOfSpiralTurns = 6
+        const theta = 2 * Math.PI * numberOfSpiralTurns * Math.sqrt(p)
         const r = 170 * Math.sqrt(p)
-        return new Vec2(r * Math.cos(theta), r * Math.sin(theta) + this.DOT_Y_OFF)
-    }
-
-    private rotate(v1: Vec2, v2: Vec2, p: number, ccw: boolean): Vec2 {
-        const mx = (v1.x + v2.x) / 2, my = (v1.y + v2.y) / 2
-        const dx = v1.x - mx, dy = v1.y - my
-        const ang = Math.atan2(dy, dx)
-        const r = Math.sqrt(dx * dx + dy * dy)
-        const o = ccw ? -1 : 1
-        const bounce = Math.sin(p * Math.PI) * 0.05 * (1 - p)
-        return new Vec2(
-            mx + r * (1 + bounce) * Math.cos(ang + o * Math.PI * easeOutElastic(p)),
-            my + r * (1 + bounce) * Math.sin(ang + o * Math.PI * easeOutElastic(p))
+        
+        return new Vector2D(
+            r * Math.cos(theta),
+            r * Math.sin(theta) + this.startDotYOffset
         )
     }
-
-    private project(pos: Vec3, sizeFactor: number, camZ: number) {
-        if (pos.z <= camZ) return
-        const depth = pos.z - camZ
-        const x = this.VIEW_ZOOM * pos.x / depth
-        const y = this.VIEW_ZOOM * pos.y / depth
-        const r = Math.max(0.3, 200 * sizeFactor / depth)
-        this.ctx.beginPath()
-        this.ctx.arc(x, y, r, 0, Math.PI * 2)
-        this.ctx.fill()
+    
+    // 旋转变换
+    public rotate(v1: Vector2D, v2: Vector2D, p: number, orientation: boolean): Vector2D {
+        const middle = new Vector2D(
+            (v1.x + v2.x) / 2,
+            (v1.y + v2.y) / 2
+        )
+        
+        const dx = v1.x - middle.x
+        const dy = v1.y - middle.y
+        const angle = Math.atan2(dy, dx)
+        const o = orientation ? -1 : 1
+        const r = Math.sqrt(dx * dx + dy * dy)
+        
+        // 弹性效果
+        const bounce = Math.sin(p * Math.PI) * 0.05 * (1 - p)
+        
+        return new Vector2D(
+            middle.x + r * (1 + bounce) * Math.cos(angle + o * Math.PI * this.easeOutElastic(p)),
+            middle.y + r * (1 + bounce) * Math.sin(angle + o * Math.PI * this.easeOutElastic(p))
+        )
     }
-
-    private computeCamZ(t: number): number {
-        const t2 = clamp(remap(t, this.CHANGE_T, 1, 0, 1), 0, 1)
-        return this.CAMERA_Z + ease(Math.pow(t2, 1.2), 1.8) * this.TRAVEL_DIST
-    }
-
-    private drawTrail(t1: number) {
-        const ctx = this.ctx
-        for (let i = 0; i < this.TRAIL_LEN; i++) {
-            const f = remap(i, 0, this.TRAIL_LEN, 1.1, 0.1)
-            const sw = (1.3 * (1 - t1) + 3.0 * Math.sin(Math.PI * t1)) * f
-            ctx.fillStyle = '#ffd890'
-            const pathTime = t1 - 0.00015 * i
-            const pos = this.spiralPath(pathTime)
-            const off = new Vec2(pos.x + 5, pos.y + 5)
-            const rot = this.rotate(pos, off, Math.sin(this.time * Math.PI * 2) * 0.5 + 0.5, i % 2 === 0)
-            ctx.beginPath()
-            ctx.arc(rot.x, rot.y, sw / 2, 0, Math.PI * 2)
-            ctx.fill()
+    
+    // 投影点
+    public showProjectedDot(position: Vector3D, sizeFactor: number) {
+        const t2 = this.constrain(this.map(this.time, this.changeEventTime, 1, 0, 1), 0, 1)
+        const newCameraZ = this.cameraZ + this.ease(Math.pow(t2, 1.2), 1.8) * this.cameraTravelDistance
+        
+        if (position.z > newCameraZ) {
+            const dotDepthFromCamera = position.z - newCameraZ
+            
+            // 3D -> 2D投影公式
+            const x = this.viewZoom * position.x / dotDepthFromCamera
+            const y = this.viewZoom * position.y / dotDepthFromCamera
+            const sw = 400 * sizeFactor / dotDepthFromCamera
+            
+            this.ctx.lineWidth = sw
+            this.ctx.beginPath()
+            this.ctx.arc(x, y, 0.5, 0, Math.PI * 2)
+            this.ctx.fill()
         }
     }
-
-    private drawStar(star: Star, t1: number, camZ: number) {
-        const sp = this.spiralPath(star.spiralLoc)
-        const q = t1 - star.spiralLoc
-        if (q <= 0) return
-
-        const dp = clamp(4 * q, 0, 1)
-        let sx: number, sy: number
-
-        if (dp < 0.3) {
-            const f = dp / 0.3
-            sx = lerp(sp.x, sp.x + star.dx * 0.3, f)
-            sy = lerp(sp.y, sp.y + star.dy * 0.3, f)
-        } else if (dp < 0.7) {
-            const f = (dp - 0.3) / 0.4
-            const curve = Math.sin(f * Math.PI) * star.rotDir * 1.5
-            const bx = sp.x + star.dx * 0.3; const by = sp.y + star.dy * 0.3
-            const tx = sp.x + star.dx * 0.7; const ty = sp.y + star.dy * 0.7
-            sx = lerp(bx, tx, f) + (-star.dy * 0.4 * curve) * f
-            sy = lerp(by, ty, f) + (star.dx * 0.4 * curve) * f
+    
+    // 绘制起始点
+    private drawStartDot() {
+        if (this.time > this.changeEventTime) {
+            const dy = this.cameraZ * this.startDotYOffset / this.viewZoom
+            const position = new Vector3D(0, dy, this.cameraTravelDistance)
+            this.showProjectedDot(position, 2.5)
+        }
+    }
+    
+    // 主渲染函数
+    public render() {
+        const ctx = this.ctx
+        if (!ctx) return
+        
+        ctx.fillStyle = '#1d1d1d'
+        
+        if (this.isDesktop) {
+            const size = Math.max(this.width, this.height)
+            ctx.fillRect(0, 0, size, size)
+            ctx.save()
+            ctx.translate(size / 2, size / 2)
         } else {
-            const f = (dp - 0.7) / 0.3
-            const bx = sp.x + star.dx * 0.7; const by = sp.y + star.dy * 0.7
-            const tDist = star.distance * star.expRate * 1.5
-            const ang = star.angle + 1.2 * star.rotDir * f * Math.PI
-            sx = lerp(bx, sp.x + tDist * Math.cos(ang), f)
-            sy = lerp(by, sp.y + tDist * Math.sin(ang), f)
+            ctx.fillRect(0, 0, this.width, this.height)
+            ctx.save()
+            ctx.translate(this.width / 2, this.height / 2)
+            
+            // scale down on mobile so it fits perfectly without squashing
+            const mobileScale = Math.min(1, this.width / 900)
+            ctx.scale(mobileScale, mobileScale)
         }
-
-        const vx = (star.z - this.CAMERA_Z) * sx / this.VIEW_ZOOM
-        const vy = (star.z - this.CAMERA_Z) * sy / this.VIEW_ZOOM
-        const sm = dp < 0.6 ? 1 + dp * 0.2 : lerp(1.2, star.finalScale, (dp - 0.6) / 0.4)
-        this.project(new Vec3(vx, vy, star.z), 8.5 * star.sw * sm, camZ)
-    }
-
-    private frame(timestamp: number) {
-        // Advance time (cycle repeats every CYCLE_DUR seconds)
-        this.time = (timestamp / 1000 / this.CYCLE_DUR) % 1
-
-        const ctx = this.ctx
-        ctx.clearRect(0, 0, this.w, this.h)
-        ctx.save()
-        ctx.translate(this.w / 2, this.h / 2)
-
-        const t1 = clamp(remap(this.time, 0, this.CHANGE_T + 0.25, 0, 1), 0, 1)
-        const t2 = clamp(remap(this.time, this.CHANGE_T, 1, 0, 1), 0, 1)
-        const camZ = this.computeCamZ(this.time)
-
-        ctx.rotate(-Math.PI * ease(t2, 2.7))
+        
+        // 计算时间参数
+        const t1 = this.constrain(this.map(this.time, 0, this.changeEventTime + 0.25, 0, 1), 0, 1)
+        const t2 = this.constrain(this.map(this.time, this.changeEventTime, 1, 0, 1), 0, 1)
+        
+        // 旋转相机
+        ctx.rotate(-Math.PI * this.ease(t2, 2.7))
+        
+        // 绘制轨迹
         this.drawTrail(t1)
-
+        
+        // 绘制星星
         ctx.fillStyle = '#ffd890'
-        for (const star of this.stars) this.drawStar(star, t1, camZ)
-
-        // Center dot after change event
-        if (this.time > this.CHANGE_T) {
-            const dy = this.CAMERA_Z * this.DOT_Y_OFF / this.VIEW_ZOOM
-            this.project(new Vec3(0, dy, this.TRAVEL_DIST), 2.5, camZ)
+        for (const star of this.stars) {
+            star.render(t1, this)
         }
-
+        
+        // 绘制起始点
+        this.drawStartDot()
+        
         ctx.restore()
     }
-
-    start() {
-        // Use GSAP ticker – syncs to rAF, avoids extra overhead
-        const cb = (time: number) => this.frame(time)
-        gsap.ticker.add(cb)
-        this.ticker = { add: gsap.ticker.add, remove: gsap.ticker.remove } as any
-        this._removeCallback = () => gsap.ticker.remove(cb)
+    
+    // 绘制轨迹
+    private drawTrail(t1: number) {
+        for (let i = 0; i < this.trailLength; i++) {
+            const f = this.map(i, 0, this.trailLength, 1.1, 0.1)
+            const sw = (1.3 * (1 - t1) + 3.0 * Math.sin(Math.PI * t1)) * f
+            
+            this.ctx.fillStyle = '#ffd890'
+            this.ctx.lineWidth = sw
+            
+            const pathTime = t1 - 0.00015 * i
+            const position = this.spiralPath(pathTime)
+            
+            // 添加旋转效果
+            const basePos = position
+            const offset = new Vector2D(position.x + 5, position.y + 5)
+            const rotated = this.rotate(
+                basePos, 
+                offset, 
+                Math.sin(this.time * Math.PI * 2) * 0.5 + 0.5, 
+                i % 2 === 0
+            )
+            
+            this.ctx.beginPath()
+            this.ctx.arc(rotated.x, rotated.y, sw / 2, 0, Math.PI * 2)
+            this.ctx.fill()
+        }
     }
-
-    private _removeCallback: (() => void) | null = null
-
-    destroy() {
-        this._removeCallback?.()
+    
+    // 暂停动画
+    public pause() {
+        this.timeline.pause()
+    }
+    
+    // 恢复动画
+    public resume() {
+        this.timeline.play()
+    }
+    
+    // 销毁动画
+    public destroy() {
+        this.timeline.kill()
     }
 }
 
-// ── React Component ───────────────────────────────────────────────────────────
+// 星星类
+class Star {
+    private dx: number
+    private dy: number
+    private spiralLocation: number
+    private strokeWeightFactor: number
+    private z: number
+    private angle: number
+    private distance: number
+    private rotationDirection: number // 旋转方向
+    private expansionRate: number // 扩散速率
+    private finalScale: number // 最终尺寸比例
+    
+    constructor(cameraZ: number, cameraTravelDistance: number) {
+        this.angle = Math.random() * Math.PI * 2
+        this.distance = 30 * Math.random() + 15
+        this.rotationDirection = Math.random() > 0.5 ? 1 : -1
+        this.expansionRate = 1.2 + Math.random() * 0.8 // 增加扩散率从0.8-1.2到1.2-2.0
+        this.finalScale = 0.7 + Math.random() * 0.6 // 0.7-1.3之间的最终尺寸
+        
+        this.dx = this.distance * Math.cos(this.angle)
+        this.dy = this.distance * Math.sin(this.angle)
+        
+        this.spiralLocation = (1 - Math.pow(1 - Math.random(), 3.0)) / 1.3
+        this.z = Vector2D.random(0.5 * cameraZ, cameraTravelDistance + cameraZ)
+        
+        const lerp = (start: number, end: number, t: number) => start * (1 - t) + end * t
+        this.z = lerp(this.z, cameraTravelDistance / 2, 0.3 * this.spiralLocation)
+        this.strokeWeightFactor = Math.pow(Math.random(), 2.0)
+    }
+    
+    render(p: number, controller: AnimationController) {
+        const spiralPos = controller.spiralPath(this.spiralLocation)
+        const q = p - this.spiralLocation
+        
+        if (q > 0) {
+            const displacementProgress = controller.constrain(4 * q, 0, 1)
+            
+            // 使用混合缓动函数，柔和开始，有弹性结束
+            const linearEasing = displacementProgress;
+            const elasticEasing = controller.easeOutElastic(displacementProgress);
+            const powerEasing = Math.pow(displacementProgress, 2);
+            
+            // 混合不同缓动效果，创造更自然的动画
+            let easing;
+            if (displacementProgress < 0.3) {
+                // 开始阶段：主要是线性和二次方
+                easing = controller.lerp(linearEasing, powerEasing, displacementProgress / 0.3);
+            } else if (displacementProgress < 0.7) {
+                // 中间阶段：过渡到弹性
+                const t = (displacementProgress - 0.3) / 0.4;
+                easing = controller.lerp(powerEasing, elasticEasing, t);
+            } else {
+                // 最终阶段：弹性效果
+                easing = elasticEasing;
+            }
+            
+            // 计算位置偏移
+            let screenX, screenY;
+            
+            // 分阶段应用不同的运动模式
+            if (displacementProgress < 0.3) {
+                // 初始阶段：直线移动 (30%)
+                screenX = controller.lerp(spiralPos.x, spiralPos.x + this.dx * 0.3, easing / 0.3);
+                screenY = controller.lerp(spiralPos.y, spiralPos.y + this.dy * 0.3, easing / 0.3);
+            } else if (displacementProgress < 0.7) {
+                // 中间阶段：曲线移动 (40%)
+                const midProgress = (displacementProgress - 0.3) / 0.4;
+                const curveStrength = Math.sin(midProgress * Math.PI) * this.rotationDirection * 1.5;
+                
+                // 基础位置（30%直线距离）
+                const baseX = spiralPos.x + this.dx * 0.3;
+                const baseY = spiralPos.y + this.dy * 0.3;
+                
+                // 目标位置（70%距离）
+                const targetX = spiralPos.x + this.dx * 0.7;
+                const targetY = spiralPos.y + this.dy * 0.7;
+                
+                // 添加曲线偏移
+                const perpX = -this.dy * 0.4 * curveStrength;
+                const perpY = this.dx * 0.4 * curveStrength;
+                
+                screenX = controller.lerp(baseX, targetX, midProgress) + perpX * midProgress;
+                screenY = controller.lerp(baseY, targetY, midProgress) + perpY * midProgress;
+            } else {
+                // 最终阶段：更强的螺旋扩散 (30%)
+                const finalProgress = (displacementProgress - 0.7) / 0.3;
+                
+                // 基础位置（70%直线距离）
+                const baseX = spiralPos.x + this.dx * 0.7;
+                const baseY = spiralPos.y + this.dy * 0.7;
+                
+                // 最终位置（更远距离）
+                const targetDistance = this.distance * this.expansionRate * 1.5;
+                const spiralTurns = 1.2 * this.rotationDirection;
+                const spiralAngle = this.angle + spiralTurns * finalProgress * Math.PI;
+                
+                const targetX = spiralPos.x + targetDistance * Math.cos(spiralAngle);
+                const targetY = spiralPos.y + targetDistance * Math.sin(spiralAngle);
+                
+                // 应用缓动
+                screenX = controller.lerp(baseX, targetX, finalProgress);
+                screenY = controller.lerp(baseY, targetY, finalProgress);
+            }
+            
+            // 将2D屏幕坐标转换为3D空间坐标
+            const vx = (this.z - (controller as any)['cameraZ']) * screenX / (controller as any)['viewZoom'];
+            const vy = (this.z - (controller as any)['cameraZ']) * screenY / (controller as any)['viewZoom'];
+            
+            const position = new Vector3D(vx, vy, this.z);
+            
+            // 粒子大小动画：初始正常，中间稍微变大，最终根据finalScale调整
+            let sizeMultiplier = 1.0;
+            if (displacementProgress < 0.6) {
+                // 前60%：略微膨胀
+                sizeMultiplier = 1.0 + displacementProgress * 0.2;
+            } else {
+                // 后40%：过渡到最终尺寸
+                const t = (displacementProgress - 0.6) / 0.4;
+                sizeMultiplier = 1.2 * (1.0 - t) + this.finalScale * t;
+            }
+            
+            const dotSize = 8.5 * this.strokeWeightFactor * sizeMultiplier;
+            
+            controller.showProjectedDot(position, dotSize);
+        }
+    }
+}
+
 export function SpiralAnimation() {
     const canvasRef = useRef<HTMLCanvasElement>(null)
-
+    const animationRef = useRef<AnimationController | null>(null)
+    const [dimensions, setDimensions] = useState({ width: typeof window !== 'undefined' ? window.innerWidth : 1000, height: typeof window !== 'undefined' ? window.innerHeight : 1000 })
+    
+    // 处理窗口大小变化
+    useEffect(() => {
+        const handleResize = () => {
+            setDimensions({
+                width: window.innerWidth,
+                height: window.innerHeight
+            })
+        }
+        
+        handleResize()
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
+    
+    // 创建和管理动画
     useEffect(() => {
         const canvas = canvasRef.current
         if (!canvas) return
-
-        const resize = () => {
-            const w = window.innerWidth
-            const h = window.innerHeight
-            const dpr = Math.min(window.devicePixelRatio || 1, 2) // cap DPR at 2 for perf
-
-            canvas.width  = w * dpr
-            canvas.height = h * dpr
-            canvas.style.width  = `${w}px`
-            canvas.style.height = `${h}px`
-        }
-
-        resize()
-
-        const ctx = canvas.getContext('2d', { alpha: true })
+        
+        const ctx = canvas.getContext('2d')
         if (!ctx) return
-
-        const dpr = Math.min(window.devicePixelRatio || 1, 2)
-        ctx.scale(dpr, dpr)
-
-        const engine = new SpiralEngine(ctx, window.innerWidth, window.innerHeight)
-
-        window.addEventListener('resize', resize)
-        return () => {
-            engine.destroy()
-            window.removeEventListener('resize', resize)
+        
+        // 处理DPR以解决模糊问题
+        const dpr = window.devicePixelRatio || 1
+        const isDesktop = dimensions.width >= dimensions.height;
+        
+        let canvasW, canvasH;
+        if (isDesktop) {
+            // 保持桌面端原有的逻辑（CSS挤压效果）
+            const size = Math.max(dimensions.width, dimensions.height)
+            canvasW = size;
+            canvasH = size;
+        } else {
+            // 移动端：保持完美比例，不拉伸
+            canvasW = dimensions.width;
+            canvasH = dimensions.height;
         }
-    }, [])
-
+        
+        canvas.width = canvasW * dpr
+        canvas.height = canvasH * dpr
+        
+        // 设置CSS尺寸
+        canvas.style.width = `${dimensions.width}px`
+        canvas.style.height = `${dimensions.height}px`
+        
+        // 缩放上下文以适应DPR
+        ctx.scale(dpr, dpr)
+        
+        // 创建动画控制器
+        animationRef.current = new AnimationController(canvas, ctx, dpr, dimensions.width, dimensions.height, isDesktop)
+        
+        return () => {
+            // 清理动画
+            if (animationRef.current) {
+                animationRef.current.destroy()
+                animationRef.current = null
+            }
+        }
+    }, [dimensions])
+    
     return (
-        <canvas
-            ref={canvasRef}
-            className="absolute inset-0"
-            style={{ display: 'block', width: '100vw', height: '100vh' }}
-        />
+        <div className="relative w-full h-full">
+            <canvas
+                ref={canvasRef}
+                className="absolute inset-0 w-full h-full"
+            />
+        </div>
     )
 }

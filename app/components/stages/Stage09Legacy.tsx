@@ -41,7 +41,7 @@ export const Stage09Legacy: React.FC = () => {
 
   const handleSlideComplete = async () => {
     if (!formRef.current) return;
-    
+
     if (!formRef.current.reportValidity()) {
       setSubmitStatus("error");
       setErrorMessage("Please complete all required fields.");
@@ -75,7 +75,7 @@ export const Stage09Legacy: React.FC = () => {
 
       // ── Crazy GSAP Form Dissolve into Cosmic Confirmation ──────────
       setSubmitStatus("success");
-      
+
       const tl = gsap.timeline({
         onComplete: () => {
           setIsSubmitted(true);
@@ -142,7 +142,7 @@ export const Stage09Legacy: React.FC = () => {
   return (
     <section
       ref={containerRef}
-      id="stage-8"
+      id="stage-5"
       className="relative w-full z-20 overflow-hidden bg-transparent"
       style={{ paddingTop: "140px", paddingBottom: "100px" }}
     >
@@ -255,7 +255,7 @@ export const Stage09Legacy: React.FC = () => {
                       ⚠️ ERROR: {errorMessage}
                     </div>
                   )}
-                  <div 
+                  <div
                     onMouseEnter={() => {
                       if (submitStatus === "idle") {
                         setCursorText("TRANSMIT");
@@ -265,9 +265,9 @@ export const Stage09Legacy: React.FC = () => {
                     onMouseLeave={() => setCursorText(null)}
                     className="inline-block"
                   >
-                    <SlideButton 
-                      status={submitStatus} 
-                      onComplete={handleSlideComplete} 
+                    <SlideButton
+                      status={submitStatus}
+                      onComplete={handleSlideComplete}
                       resetKey={resetKey}
                     />
                   </div>
