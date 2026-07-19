@@ -44,14 +44,14 @@ export const StardustRiver: React.FC<StardustRiverProps> = ({
 
     let animationFrameId: number;
     let width = (canvas.width = canvas.parentElement?.clientWidth || window.innerWidth);
-    let height = (canvas.height = 450);
+    let height = (canvas.height = window.innerWidth < 768 ? 250 : 450);
 
     // Handle high-DPI Retina screens for crisp rendering
     const dpr = window.devicePixelRatio || 1;
     const resizeCanvas = () => {
       if (!canvas || !canvas.parentElement) return;
-      width = canvas.parentElement.clientWidth;
-      height = 450;
+      width = window.innerWidth;
+      height = width < 768 ? 250 : 450;
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       canvas.style.width = `${width}px`;
@@ -70,14 +70,19 @@ export const StardustRiver: React.FC<StardustRiverProps> = ({
 
     const createParticle = (type: "dust" | "star" | "orb"): Particle => {
       const x = Math.random() * width;
-      const riverCenter = height / 2 - 30;
+      const riverCenter = height / 2;
+      const maxSpread = (height / 2) - 15; // Keep particles at least 15px away from the edges
       
-      let spread = 50;
-      if (type === "star") spread = 110;
-      if (type === "orb") spread = 90;
+      let baseSpread = 50;
+      if (type === "star") baseSpread = 110;
+      if (type === "orb") baseSpread = 90;
 
-      const randomSpread = (Math.random() - 0.5 + Math.random() - 0.5) * spread * 2;
-      const baseY = riverCenter + randomSpread;
+      // Use a triangle distribution [-1, 1] for a natural clustered look.
+      // Scale it by baseSpread * 2 (the original intended width), but cap it at maxSpread so nothing clips.
+      const actualSpread = Math.min(baseSpread * 2, maxSpread);
+      const randNormal = Math.random() - 0.5 + Math.random() - 0.5;
+      
+      const baseY = riverCenter + (randNormal * actualSpread);
 
       let size = Math.random() * 1.2 + 0.4;
       let opacity = Math.random() * 0.7 + 0.2;
@@ -227,8 +232,8 @@ export const StardustRiver: React.FC<StardustRiverProps> = ({
       <div className="relative w-full flex justify-center items-center">
         <canvas
           ref={canvasRef}
-          className="w-full h-[450px] block cursor-crosshair select-none"
-          style={{ width: "100%", height: "450px" }}
+          className="w-full h-[250px] md:h-[450px] block cursor-crosshair select-none"
+          style={{ width: "100%" }}
         />
       </div>
     </div>

@@ -18,6 +18,7 @@ interface SoulFlowButtonProps {
   className?: string;
   as?: 'button' | 'a';
   type?: 'button' | 'submit';
+  hideArrows?: boolean;
 }
 
 // Which color the circle fill uses, and what text/arrow color becomes after fill
@@ -42,6 +43,7 @@ export const SoulFlowButton = React.forwardRef<
   className,
   as = 'button',
   type = 'button',
+  hideArrows = false,
 }, ref) => {
   const { bg, onFill, arrowColor } = VARIANT[variant];
 
@@ -73,20 +75,22 @@ export const SoulFlowButton = React.forwardRef<
   const inner = (
     <>
       {/* ── Left arrow — flies in from the left on hover ── */}
-      <ArrowRight className={cn(
-        'absolute w-3.5 h-3.5 z-10 fill-none transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
-        'left-[-20%] opacity-0 group-hover:left-3.5 group-hover:opacity-100',
-        arrowColor,
-        // After fill, arrow needs to contrast
-        'group-hover:stroke-current',
-        onFill.includes('black') ? 'group-hover:text-black' : 'group-hover:text-[#ffc490]',
-      )} />
+      {!hideArrows && (
+        <ArrowRight className={cn(
+          'absolute w-3.5 h-3.5 z-10 fill-none transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+          'left-[-20%] opacity-0 group-hover:left-3.5 group-hover:opacity-100',
+          arrowColor,
+          // After fill, arrow needs to contrast
+          'group-hover:stroke-current',
+          onFill.includes('black') ? 'group-hover:text-black' : 'group-hover:text-[#ffc490]',
+        )} />
+      )}
 
       {/* ── Label — shifts right on hover to make room for arrow ── */}
       <span className={cn(
         'relative z-10',
         'transition-all duration-[700ms] ease-out',
-        'translate-x-0 group-hover:translate-x-2',
+        !hideArrows ? 'translate-x-0 group-hover:translate-x-2' : '',
         // Text color flips after fill
         `group-hover:${onFill}`,
       )}>
@@ -104,11 +108,13 @@ export const SoulFlowButton = React.forwardRef<
       )} />
 
       {/* ── Right arrow — flies out to the right on hover ── */}
-      <ArrowRight className={cn(
-        'absolute w-3.5 h-3.5 z-10 fill-none transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
-        'right-3.5 opacity-100 group-hover:right-[-20%] group-hover:opacity-0',
-        arrowColor,
-      )} />
+      {!hideArrows && (
+        <ArrowRight className={cn(
+          'absolute w-3.5 h-3.5 z-10 fill-none transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]',
+          'right-3.5 opacity-100 group-hover:right-[-20%] group-hover:opacity-0',
+          arrowColor,
+        )} />
+      )}
     </>
   );
 

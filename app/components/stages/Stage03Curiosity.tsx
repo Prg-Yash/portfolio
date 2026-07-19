@@ -24,7 +24,7 @@ export const Stage03Curiosity: React.FC = () => {
   return (
     <section
       id="stage-2"
-      className="relative w-full z-20 overflow-visible pt-4 sm:pt-8 pb-12 sm:pb-16"
+      className="relative w-full z-20 overflow-visible pt-16 md:pt-24 pb-12 sm:pb-16"
     >
       {/* Subtle radial vignette behind the constellation */}
       <div

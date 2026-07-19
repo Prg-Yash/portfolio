@@ -84,8 +84,7 @@ export const Stage05Creation: React.FC = () => {
     <section
       ref={containerRef}
       id="stage-4"
-      className="relative min-h-screen w-full z-20 overflow-hidden"
-      style={{ paddingTop: "170px", paddingBottom: "50px" }}
+      className="relative py-16 pt-32 md:pt-40 pb-16 md:pb-24 md:min-h-screen w-full z-20 overflow-hidden"
     >
       {/* Subtle ambient cosmic gradient behind the archive */}
       <div
@@ -98,7 +97,7 @@ export const Stage05Creation: React.FC = () => {
       <div className="mx-auto w-full max-w-6xl px-6 sm:px-12 relative z-10">
 
         {/* ── Section Header & Text Filter Bar ───────────────────────── */}
-        <div className="mb-16 sm:mb-24">
+        <div className="mb-10 sm:mb-16 md:mb-24">
           <div className="flex items-center gap-4 mb-4">
             <span className="font-mono text-xs font-bold tracking-[0.35em] text-[#ffc490] animate-pulse">
               05 / CREATION
@@ -144,7 +143,7 @@ export const Stage05Creation: React.FC = () => {
         {/* ── The Codex Archive (Boxless Horizontal Slabs) ───────────── */}
         <div ref={listRef} className="border-t border-white/15">
           {displayedProjects.length === 0 ? (
-            <div className="py-24 text-center">
+            <div className="py-12 md:py-24 text-center">
               <Sparkles className="w-8 h-8 text-[#ffc490]/40 mx-auto mb-3 animate-pulse" />
               <p className="font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
                 No projects found in this sector.
@@ -312,7 +311,7 @@ export const Stage05Creation: React.FC = () => {
 
         {/* ── View More / Explore Full Archive Toggle Button ─────────── */}
         {filteredProjects.length > FEATURED_LIMIT && (
-          <div className="pt-16 text-center">
+          <div className="pt-10 md:pt-16 text-center">
             <SoulFlowButton
               onClick={() => setShowAll(!showAll)}
               onMouseEnter={() => {

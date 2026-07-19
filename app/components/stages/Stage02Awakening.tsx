@@ -22,10 +22,10 @@ export const Stage02Awakening: React.FC = () => {
     const words = textEl.querySelectorAll(".word-span");
     const contentEl = container.querySelector(".stage-content") as HTMLElement;
 
-    // Calculate how much the content height exceeds the viewport height
     const calculateOverflow = () => {
       if (!contentEl) return 0;
-      const totalHeight = contentEl.scrollHeight + 80;
+      const sectionPt = window.innerWidth < 640 ? 96 : 128;
+      const totalHeight = contentEl.scrollHeight + sectionPt + 40;
       return Math.max(0, totalHeight - window.innerHeight);
     };
 
@@ -109,7 +109,7 @@ export const Stage02Awakening: React.FC = () => {
       <section
         ref={containerRef}
         id="stage-1"
-      className="relative flex min-h-screen w-full flex-col items-center justify-center py-10 sm:py-16 z-20 overflow-hidden perspective-[1000px]"
+      className="relative flex h-[100vh] w-full flex-col items-center justify-start pt-24 sm:pt-32 z-20 overflow-hidden perspective-[1000px]"
     >
       {/* Cinematic Volumetric Light Dawn Aura (No Blurry Shards!) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -227,7 +227,7 @@ export const Stage02Awakening: React.FC = () => {
       </section>
 
       {/* Standalone Full-Width Alive Stardust River (Outside Pinned Section to prevent GSAP overlap & lag!) */}
-      <div className="relative z-10 w-full pt-0 pb-0 sm:pb-2 bg-transparent -mt-6 sm:-mt-10">
+      <div className="relative z-10 w-full pt-0 pb-0 sm:pb-2 bg-transparent mt-12 sm:-mt-10">
         <StardustRiver />
       </div>
     </>

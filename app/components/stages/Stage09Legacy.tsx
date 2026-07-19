@@ -8,6 +8,7 @@ import { SITE_CONTENT } from "../../data/content";
 import { useSoul } from "../../context/SoulContext";
 import { SlideButton } from "../ui/SlideButton";
 import { SoulFlowButton } from "../ui/SoulFlowButton";
+import { CopyEmailButton } from "../ui/copy-email-button";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,18 +18,11 @@ export const Stage09Legacy: React.FC = () => {
   const successRef = useRef<HTMLDivElement | null>(null);
   const { scrollToStageIndex, setCursorText, setCursorColor } = useSoul();
 
-  const [copied, setCopied] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
   const [resetKey, setResetKey] = useState(0);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(SITE_CONTENT.legacy.contact.email);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
-  };
 
   useEffect(() => {
     if (isSubmitted && successRef.current) {
@@ -144,8 +138,7 @@ export const Stage09Legacy: React.FC = () => {
     <section
       ref={containerRef}
       id="stage-5"
-      className="relative w-full z-20 overflow-hidden bg-transparent"
-      style={{ paddingTop: "140px", paddingBottom: "100px" }}
+      className="relative w-full z-20 overflow-hidden bg-transparent pt-24 md:pt-[140px] pb-16 md:pb-[100px]"
     >
       {/* Ambient golden portal glow */}
       <div
@@ -158,7 +151,7 @@ export const Stage09Legacy: React.FC = () => {
       <div className="mx-auto w-full max-w-6xl px-6 sm:px-12 relative z-10">
 
         {/* ── Section Header ─────────────────────────────────────────── */}
-        <div className="mb-16 sm:mb-24 text-center sm:text-left">
+        <div className="mb-10 sm:mb-16 md:mb-24 text-center sm:text-left">
           <div className="inline-flex items-center gap-4 mb-4">
             <span className="font-mono text-xs font-bold tracking-[0.35em] text-[#ffd890] animate-pulse flex items-center gap-2">
               <Radio className="w-3.5 h-3.5 inline text-[#ffd890]" />
@@ -316,18 +309,7 @@ export const Stage09Legacy: React.FC = () => {
                 Prefer direct client email? Copy my electronic address below for immediate studio outreach.
               </p>
 
-                <SoulFlowButton
-                  onClick={handleCopy}
-                  onMouseEnter={() => {
-                    setCursorText("COPY");
-                    setCursorColor("#ffd890");
-                  }}
-                  onMouseLeave={() => setCursorText(null)}
-                  variant="gold"
-                  className="w-full border-white/15 bg-black/40"
-                >
-                  {copied ? "COPIED ✓" : SITE_CONTENT.legacy.contact.email}
-                </SoulFlowButton>
+                <CopyEmailButton email={SITE_CONTENT.legacy.contact.email} />
             </div>
 
             {/* Social Links Slab */}
@@ -363,7 +345,7 @@ export const Stage09Legacy: React.FC = () => {
         </div>
 
         {/* ── Footer & Return to Void ────────────────────────────────── */}
-        <footer className="mt-24 pt-8 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <footer className="mt-16 md:mt-24 pt-8 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/40">
             {SITE_CONTENT.legacy.copyright}
           </p>
@@ -372,6 +354,7 @@ export const Stage09Legacy: React.FC = () => {
             onClick={() => scrollToStageIndex(0)}
             variant="cream"
             className="text-[10px]"
+            hideArrows
           >
             RETURN TO THE VOID ↑
           </SoulFlowButton>
