@@ -29,14 +29,15 @@ export const Stage02Awakening: React.FC = () => {
       return Math.max(0, totalHeight - window.innerHeight);
     };
 
+    const isMobile = window.innerWidth < 768;
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: container,
         start: "top top",
-        end: "+=280%",
+        end: isMobile ? "+=100%" : "+=280%",
         pin: true,
         pinSpacing: true,
-        scrub: 1.2,
+        scrub: isMobile ? 0.3 : 1.2,
         invalidateOnRefresh: true,
       },
     });
