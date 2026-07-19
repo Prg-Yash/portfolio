@@ -47,12 +47,12 @@ export const Stage02Awakening: React.FC = () => {
       words,
       {
         opacity: 0.15,
-        rotateX: 50,
-        rotateY: -15,
+        rotateX: isMobile ? 0 : 50,
+        rotateY: isMobile ? 0 : -15,
         y: 20,
-        z: -40,
+        z: isMobile ? 0 : -40,
         scale: 0.95,
-        filter: "blur(5px)",
+        filter: isMobile ? "none" : "blur(5px)",
         color: "#ffffff",
       },
       {
@@ -62,7 +62,7 @@ export const Stage02Awakening: React.FC = () => {
         y: 0,
         z: 0,
         scale: 1,
-        filter: "blur(0px)",
+        filter: isMobile ? "none" : "blur(0px)",
         color: "#ffc490",
         stagger: 0.025,
         ease: "expo.out",
@@ -77,8 +77,8 @@ export const Stage02Awakening: React.FC = () => {
       "-=0.6"
     ).fromTo(
       subEl,
-      { opacity: 0, y: 50, scale: 0.95, filter: "blur(10px)" },
-      { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 2.0, ease: "expo.out" },
+      { opacity: 0, y: 50, scale: 0.95, filter: isMobile ? "none" : "blur(10px)" },
+      { opacity: 1, y: 0, scale: 1, filter: isMobile ? "none" : "blur(0px)", duration: 2.0, ease: "expo.out" },
       "-=1.2"
     );
 
@@ -114,7 +114,7 @@ export const Stage02Awakening: React.FC = () => {
     >
       {/* Cinematic Volumetric Light Dawn Aura (No Blurry Shards!) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] sm:w-[1000px] h-[500px] sm:h-[700px] bg-[radial-gradient(ellipse_at_center,rgba(255,196,144,0.12)_0%,rgba(255,196,144,0.03)_45%,transparent_80%)] blur-3xl animate-[pulse_8s_ease-in-out_infinite]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] sm:w-[1000px] h-[500px] sm:h-[700px] bg-[radial-gradient(ellipse_at_center,rgba(255,196,144,0.12)_0%,rgba(255,196,144,0.03)_45%,transparent_80%)] blur-3xl md:animate-[pulse_8s_ease-in-out_infinite]" />
       </div>
 
       <div className="stage-content relative z-10 mx-auto max-w-5xl text-center sm:text-left px-6 sm:px-12 will-change-transform">
