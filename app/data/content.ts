@@ -117,39 +117,10 @@ export const SITE_CONTENT = {
       enabled: true,
       particleState: { count: 2800, speed: 1.5, dispersion: 1.0, color: "#ffc870" }
     },
-    {
-      id: "failure",
-      number: "06",
-      name: "FAILURE",
-      label: "[ RESILIENCE ]",
-      title: "The Dissolution of Certainty",
-      accentColor: "#ff6060",
-      enabled: true,
-      particleState: { count: 1500, speed: 2.0, dispersion: 2.5, color: "#d05050" }
-    },
-    {
-      id: "transformation",
-      number: "07",
-      name: "TRANSFORMATION",
-      label: "[ PHILOSOPHY ]",
-      title: "Reassembling from the Ashes",
-      accentColor: "#d4a5ff",
-      enabled: false,
-      particleState: { count: 2200, speed: 1.0, dispersion: 0.6, color: "#c080ff" }
-    },
-    {
-      id: "wisdom",
-      number: "08",
-      name: "WISDOM",
-      label: "[ TESTIMONIALS ]",
-      title: "The Serenity of Equilibrium",
-      accentColor: "#ffc490",
-      enabled: false,
-      particleState: { count: 2400, speed: 0.3, dispersion: 0.2, color: "#ffc490" }
-    },
+
     {
       id: "legacy",
-      number: "07",
+      number: "06",
       name: "LEGACY",
       label: "[ CONTACT ]",
       title: "Returning to the Infinite",
@@ -408,6 +379,17 @@ export const SITE_CONTENT = {
   projects: [
     // ── PERSONAL PROJECTS & SAAS ─────────────────────────────────────────────
     {
+      id: "gten",
+      title: "Gten — Fund Flow Intelligence",
+      subtitle: "AI/ML Financial Forensics & Fraud Detection",
+      description: "An advanced financial forensics platform utilizing AI/ML models for real-time fund flow intelligence and anomaly detection. Developed during the prestigious national Idea 2.0 Hackathon organized by Union Bank of India.",
+      tags: ["REACT.JS", "PRISMA", "POSTGRESQL", "NEO4J", "PYTHON", "FASTAPI", "SHAP", "GEMINI", "RESEND"],
+      image: "/projects/gten.webp",
+      link: "https://g-ten.devally.in",
+      year: "2025",
+      category: "PERSONAL"
+    },
+    {
       id: "sitepilot",
       title: "Sitepilot",
       subtitle: "AI Multi-Tenant Custom Website Engine",
@@ -440,17 +422,7 @@ export const SITE_CONTENT = {
       year: "2025",
       category: "PERSONAL"
     },
-    {
-      id: "gten",
-      title: "Gten — Fund Flow Intelligence",
-      subtitle: "AI/ML Financial Forensics & Fraud Detection",
-      description: "An advanced financial forensics platform utilizing AI/ML models for real-time fund flow intelligence and anomaly detection. Developed during the prestigious national Idea 2.0 Hackathon organized by Union Bank of India.",
-      tags: ["REACT.JS", "PRISMA", "POSTGRESQL", "NEO4J", "PYTHON", "FASTAPI", "SHAP", "GEMINI", "RESEND"],
-      image: "/projects/gten.webp",
-      link: "https://g-ten.devally.in",
-      year: "2025",
-      category: "PERSONAL"
-    },
+
     {
       id: "eve-manager",
       title: "EVE Manager",

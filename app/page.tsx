@@ -21,9 +21,7 @@ import { Stage02Awakening } from "./components/stages/Stage02Awakening";
 import { Stage03Curiosity } from "./components/stages/Stage03Curiosity";
 import { Stage04Learning } from "./components/stages/Stage04Learning";
 import { Stage05Creation } from "./components/stages/Stage05Creation";
-import { Stage06Failure } from "./components/stages/Stage06Failure";
-import { Stage07Transform } from "./components/stages/Stage07Transform";
-import { Stage08Wisdom } from "./components/stages/Stage08Wisdom";
+
 import { Stage09Legacy } from "./components/stages/Stage09Legacy";
 import { CosmicFooter } from "./components/ui/CosmicFooter";
 
@@ -57,9 +55,7 @@ export default function Home() {
         <Stage03Curiosity />
         <Stage04Learning />
         <Stage05Creation />
-        {/* <Stage06Failure /> */}
-        {/* <Stage07Transform />
-        <Stage08Wisdom />*/}
+
         <Stage09Legacy />
       </div>
 

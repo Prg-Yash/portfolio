@@ -148,24 +148,27 @@ const EraPanel: React.FC<{ era: MilestoneEra; items: TimelineMilestone[] }> = ({
 
   return (
     <div
-      className="era-panel w-max h-full flex flex-row flex-shrink-0"
+      className="era-panel w-max h-full flex flex-row flex-shrink-0 md:w-screen md:flex-col md:pt-14 md:pb-8 md:px-12 lg:pl-16 lg:pr-20"
       data-era={era}
     >
       {/* ── Era header ──────────────────────────────────────────── */}
-      <div className="era-header flex-shrink-0 w-screen md:w-[60vw] lg:w-[45vw] h-full flex flex-col justify-center px-6 sm:px-16 lg:px-24 relative border-r border-white/5">
+      <div 
+        className="era-header flex-shrink-0 relative w-screen h-full flex flex-col justify-center px-6 border-r border-white/5 sm:px-16 lg:px-24 md:w-full md:h-auto md:flex-row md:items-end md:justify-between md:px-0 md:border-r-0 md:border-b md:mb-6 md:pb-4"
+        style={{ borderColor: `${cfg.color}12` }}
+      >
         <div>
-          <div className="flex items-center gap-3 mb-3">
-            <span className="font-mono text-[10px] tracking-[0.5em] uppercase font-bold" style={{ color: cfg.color }}>
+          <div className="flex items-center gap-3 md:gap-2 mb-3 md:mb-2">
+            <span className="font-mono text-[10px] md:text-[9px] tracking-[0.5em] uppercase font-bold" style={{ color: cfg.color }}>
               ERA {cfg.number}
             </span>
-            <div className="h-[1px] w-12 opacity-30" style={{ background: cfg.color }} />
-            <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/25">{cfg.years}</span>
+            <div className="h-[1px] w-12 md:w-8 opacity-30" style={{ background: cfg.color }} />
+            <span className="font-mono text-[10px] md:text-[9px] tracking-[0.3em] uppercase text-white/25">{cfg.years}</span>
           </div>
 
           <h3
-            className="era-title font-serif-italic leading-none mb-6"
+            className="era-title font-serif-italic leading-none mb-6 md:mb-0"
             style={{
-              fontSize: "clamp(48px, 8vw, 96px)",
+              fontSize: "clamp(40px, 6vw, 96px)",
               color: "#f5f0e8",
               letterSpacing: "-0.03em",
             }}
@@ -174,7 +177,7 @@ const EraPanel: React.FC<{ era: MilestoneEra; items: TimelineMilestone[] }> = ({
           </h3>
 
           <div
-            className="era-accent-line h-[1.5px] origin-left mb-8"
+            className="era-accent-line h-[1.5px] origin-left mb-8 md:mb-0 md:mt-3"
             style={{
               background: `linear-gradient(90deg, ${cfg.color}, ${cfg.color}00)`,
               width: "100%",
@@ -183,31 +186,60 @@ const EraPanel: React.FC<{ era: MilestoneEra; items: TimelineMilestone[] }> = ({
             }}
           />
 
-          <p className="era-subtitle font-mono text-xs tracking-[0.15em] text-white/40 leading-relaxed mb-6 max-w-sm">
+          {/* Subtitle and count for mobile */}
+          <div className="md:hidden">
+            <p className="era-subtitle font-mono text-xs tracking-[0.15em] text-white/40 leading-relaxed mb-6 max-w-sm">
+              {cfg.subtitle}
+            </p>
+            <div className="flex items-baseline gap-2">
+              <span
+                className="font-serif-italic text-5xl leading-none"
+                style={{ color: `${cfg.color}50` }}
+              >
+                {String(items.length).padStart(2, "0")}
+              </span>
+              <span className="font-mono text-[9px] tracking-[0.35em] uppercase text-white/20">
+                MILESTONES
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Subtitle and count for desktop */}
+        <div className="hidden md:block text-right flex-shrink-0 ml-8">
+          <p className="era-subtitle font-mono text-[10px] tracking-[0.15em] text-white/35 leading-relaxed mb-3">
             {cfg.subtitle}
           </p>
-
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-baseline gap-1.5 justify-end">
             <span
-              className="font-serif-italic text-5xl leading-none"
+              className="font-serif-italic text-4xl leading-none"
               style={{ color: `${cfg.color}50` }}
             >
               {String(items.length).padStart(2, "0")}
             </span>
-            <span className="font-mono text-[9px] tracking-[0.35em] uppercase text-white/20">
+            <span className="font-mono text-[8px] tracking-[0.35em] uppercase text-white/20">
               MILESTONES
             </span>
           </div>
         </div>
       </div>
 
-      {/* ── Milestone cards in a continuous 2-row grid ──────────────────────────────────── */}
-      <div className="grid grid-rows-2 grid-flow-col content-center items-center gap-4 sm:gap-6 px-6 sm:px-12 h-full py-16">
+      {/* ── Milestone cards in grid (Mobile Layout) ──────────────────────────────────── */}
+      <div className="grid md:hidden grid-rows-2 grid-flow-col content-center items-center gap-4 sm:gap-6 px-6 sm:px-12 h-full py-16">
         {items.map((item) => (
-          <div key={item.year + item.title} className="w-[85vw] sm:w-[420px]">
+          <div key={item.year + item.title + "_mobile"} className="w-[85vw] sm:w-[420px]">
             <Card item={item} />
           </div>
         ))}
+      </div>
+
+      {/* ── Milestone cards in grid (Desktop Layout) ──────────────────────────────────── */}
+      <div className="hidden md:block flex-1 overflow-y-auto w-full">
+        <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 pb-4">
+          {items.map((item) => (
+            <Card key={item.year + item.title + "_desktop"} item={item} />
+          ))}
+        </div>
       </div>
     </div>
   );

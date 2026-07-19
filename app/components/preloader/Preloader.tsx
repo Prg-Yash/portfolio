@@ -1,188 +1,165 @@
 "use client";
-/**
- * Preloader.tsx — The Soul Archive Experience (Pure Code Awwwards Edition)
- * ============================================================================
- * 100% code-driven celestial singularity engine. Zero raster images.
- * Features:
- * - Sacred geometry rotating rings (`SoulCore`)
- * - Gravitational stardust vortex (`Particles`)
- * - Live memory reconstruction progress (`00% -> 100%`)
- * - Luxury editorial text sequence (`YASH NIMSE`)
- * - Cosmic shockwave reveal exit into the main portfolio
- */
 
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { useSoul } from "../../context/SoulContext";
-
-// Sub-components
+import { SpiralAnimation } from "../ui/spiral-animation";
 import { FilmGrain } from "./FilmGrain";
-import { Glow } from "./Glow";
-import { SoulCore } from "./SoulCore";
-import { Particles } from "./Particles";
-import { TextSequence, TEXT_LINES } from "./TextSequence";
-
-// Styles
-import "./preloader.css";
 
 export const Preloader: React.FC = () => {
   const { isLoaded, setIsLoaded } = useSoul();
-
-  const rootRef      = useRef<HTMLDivElement | null>(null);
-  const soulRef      = useRef<HTMLDivElement | null>(null);
-  const glowRef      = useRef<HTMLDivElement | null>(null);
-  const particlesRef = useRef<HTMLCanvasElement | null>(null);
-  const textRef      = useRef<HTMLDivElement | null>(null);
-  const progressRef  = useRef<HTMLDivElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const progressRef = useRef<HTMLSpanElement | null>(null);
 
   useEffect(() => {
     if (isLoaded) return;
 
-    const root      = rootRef.current;
-    const soul      = soulRef.current;
-    const glow      = glowRef.current;
-    const particles = particlesRef.current;
-    const counter   = progressRef.current;
-
-    if (!root || !soul || !glow || !particles || !counter) return;
-
-    const prefersReduced =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (prefersReduced) {
-      gsap.set(soul, { opacity: 0, scale: 1, filter: "blur(0px)" });
-      gsap.set(particles, { opacity: 0.4 });
-      const tl = gsap.timeline({
-        onComplete: () => {
-          gsap.to(root, {
-            opacity: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            onComplete: () => setIsLoaded(true),
-          });
-        },
-      });
-      tl.to(soul, { opacity: 1, duration: 0.8, ease: "power2.out" })
-        .to("#line-3", { opacity: 1, y: 0, duration: 0.5 }, 0.8)
-        .to("#line-3", { opacity: 0, duration: 0.4 }, 1.8);
-      return () => { tl.kill(); };
-    }
-
-    // ── Full Cinematic Timeline ────────────────────────────────
-    const glow1 = glow.querySelector("[data-glow='1']") as HTMLElement;
-    const glow2 = glow.querySelector("[data-glow='2']") as HTMLElement;
-    const glow3 = glow.querySelector("[data-glow='3']") as HTMLElement;
-
-    gsap.set(soul,      { opacity: 0, scale: 0.65, filter: "blur(30px)" });
-    gsap.set(particles, { opacity: 0 });
-    gsap.set([glow1, glow2, glow3], { opacity: 0 });
-    gsap.set(counter,   { opacity: 0 });
-
-    TEXT_LINES.forEach(({ id }) => {
-      gsap.set(`#${id}`, { opacity: 0, y: 8 });
-    });
-
     const progressObj = { value: 0 };
-    const progressEl = document.getElementById("preloader-progress-number");
 
     const tl = gsap.timeline({
       onComplete: () => {
-        setIsLoaded(true);
+        if (rootRef.current) {
+          gsap.to(rootRef.current, {
+            opacity: 0,
+            duration: 1.2,
+            ease: "power2.inOut",
+            onComplete: () => setIsLoaded(true),
+          });
+        }
       },
     });
 
-    // ── 0.0s  Stardust vortex & live counter fade in ──────────
-    tl.addLabel("start", 0);
-    tl.to(particles, { opacity: 0.85, duration: 0.9, ease: "power2.out" }, "start");
-    tl.to(counter,   { opacity: 1, duration: 0.7, ease: "power2.out" }, "start+=0.2");
-
-    // Smooth counter count-up from 0 to 100 across 5.2 seconds
+    // Counter runs over 6 seconds
     tl.to(progressObj, {
       value: 100,
-      duration: 5.2,
+      duration: 6,
       ease: "power2.inOut",
       onUpdate: () => {
-        if (progressEl) {
+        if (progressRef.current) {
           const val = Math.round(progressObj.value);
-          progressEl.textContent = val < 10 ? `0${val}` : `${val}`;
+          progressRef.current.textContent = val < 10 ? `0${val}` : `${val}`;
         }
       },
-    }, "start+=0.2");
+    });
 
-    // ── 0.4s  "ARCHIVE // UNKNOWN" ───────────────────────────
-    tl.addLabel("text-0", 0.4);
-    tl.to("#line-0", { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, "text-0");
-    tl.to("#line-0", { opacity: 0, y: -6, duration: 0.4, ease: "power2.in" }, "text-0+=0.85");
-
-    // ── 0.8s  Soul Core Singularity materialises ─────────────
-    tl.addLabel("soul-in", 0.8);
-    tl.to(soul, { opacity: 1, duration: 1.8, ease: "power3.out" }, "soul-in");
-    tl.to(soul, { scale: 1, duration: 1.6, ease: "expo.out" }, "soul-in");
-    tl.to(soul, { filter: "blur(0px)", duration: 1.5, ease: "power2.out" }, "soul-in");
-
-    tl.to(glow1, { opacity: 1, duration: 1.8, ease: "power2.out" }, "soul-in+=0.1");
-    tl.to(glow2, { opacity: 1, duration: 1.6, ease: "power2.out" }, "soul-in+=0.2");
-    tl.to(glow3, { opacity: 1, duration: 1.4, ease: "power2.out" }, "soul-in+=0.3");
-
-    // Deep breathing pulses on the soul core
-    tl.to(soul, { scale: 1.05, duration: 1.4, ease: "sine.inOut", yoyo: true, repeat: 2 }, "soul-in+=1.0");
-
-    // ── 1.6s  "Recovering Memories..." ──────────────────────
-    tl.addLabel("text-1", 1.6);
-    tl.to("#line-1", { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, "text-1");
-    tl.to("#line-1", { opacity: 0, y: -6, duration: 0.4, ease: "power2.in" }, "text-1+=0.85");
-
-    // ── 2.7s  "Identity Located" ─────────────────────────────
-    tl.addLabel("text-2", 2.7);
-    tl.to("#line-2", { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, "text-2");
-    tl.to("#line-2", { opacity: 0, y: -6, duration: 0.4, ease: "power2.in" }, "text-2+=0.85");
-
-    // ── 3.8s  "YASH NIMSE" (name reveal — luxurious & prominent) ──
-    tl.addLabel("text-3", 3.8);
-    tl.to("#line-3", { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" }, "text-3");
-    tl.to("#line-3", { opacity: 0, y: -6, duration: 0.45, ease: "power2.in" }, "text-3+=1.0");
-
-    // ── 4.8s  "Entering The Soul Archive..." ─────────────────
-    tl.addLabel("text-4", 4.8);
-    tl.to("#line-4", { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, "text-4");
-    tl.to("#line-4", { opacity: 0, duration: 0.35, ease: "power2.in" }, "text-4+=0.6");
-
-    // ── 5.4s  Cosmic Shockwave Singularity Pulse ─────────────
-    tl.addLabel("pulse", 5.4);
-    tl.to(soul, { scale: 3.5, opacity: 0, duration: 0.55, ease: "expo.in" }, "pulse");
-    tl.to([glow1, glow2, glow3], { scale: 2.8, opacity: 0, duration: 0.55, ease: "power2.in" }, "pulse");
-    tl.to(particles, { opacity: 0, duration: 0.45, ease: "power2.in" }, "pulse");
-    tl.to(counter,   { opacity: 0, duration: 0.35, ease: "power2.in" }, "pulse");
-
-    // ── 5.7s  Full preloader dissolves to transparent ────────
-    tl.addLabel("exit", 5.7);
-    tl.to(root, {
-      opacity: 0,
-      duration: 0.55,
-      ease: "power2.inOut",
-    }, "exit");
-    tl.set(root, { display: "none" });
-
-    return () => { tl.kill(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    return () => {
+      tl.kill();
+    };
+  }, [isLoaded, setIsLoaded]);
 
   if (isLoaded) return null;
 
   return (
     <div
       ref={rootRef}
-      className="preloader-root"
+      style={{ position: "fixed", inset: 0, zIndex: 100, background: "#1d1d1d", overflow: "hidden" }}
       role="status"
-      aria-label="Loading The Soul Archive"
+      aria-label="Loading"
     >
-      <div className="preloader-vignette" aria-hidden="true" />
       <FilmGrain />
-      <Particles ref={particlesRef} />
-      <Glow ref={glowRef} />
-      <SoulCore ref={soulRef} />
-      <TextSequence ref={textRef} progressRef={progressRef} />
+
+      {/* Full-screen spiral canvas – no blend modes for perf */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+        <SpiralAnimation />
+      </div>
+
+      {/* Bottom HUD */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          padding: "2.5rem 3rem",
+          pointerEvents: "none",
+        }}
+      >
+        {/* Left: Branding */}
+        <div style={{ fontFamily: "monospace" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                background: "#ffd890",
+                boxShadow: "0 0 8px #ffd890",
+                display: "inline-block",
+                animation: "pulse 2s ease-in-out infinite",
+              }}
+            />
+            <span
+              style={{
+                fontSize: "0.7rem",
+                letterSpacing: "0.25em",
+                textTransform: "uppercase",
+                color: "rgba(255,255,255,0.9)",
+                textShadow: "0 2px 8px rgba(0,0,0,0.8)",
+              }}
+            >
+              SYSTEM AWAKENING
+            </span>
+          </div>
+          <div
+            style={{
+              marginTop: "0.4rem",
+              paddingLeft: "1.25rem",
+              fontSize: "0.65rem",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              color: "rgba(255,216,144,0.65)",
+              textShadow: "0 2px 8px rgba(0,0,0,0.8)",
+            }}
+          >
+            YASH NIMSE // ARCHIVE
+          </div>
+        </div>
+
+        {/* Right: Numeric counter */}
+        <div
+          style={{
+            fontFamily: "monospace",
+            display: "flex",
+            alignItems: "flex-end",
+            lineHeight: 1,
+          }}
+        >
+          <span
+            ref={progressRef}
+            style={{
+              fontSize: "clamp(3.5rem, 8vw, 6rem)",
+              fontWeight: 300,
+              color: "rgba(255,255,255,0.95)",
+              letterSpacing: "0.05em",
+              textShadow: "0 0 30px rgba(255,255,255,0.25)",
+            }}
+          >
+            00
+          </span>
+          <span
+            style={{
+              fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+              color: "#ffd890",
+              marginLeft: "0.2rem",
+              marginBottom: "0.3rem",
+              textShadow: "0 0 12px rgba(255,216,144,0.6)",
+            }}
+          >
+            %
+          </span>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+      `}</style>
     </div>
   );
 };

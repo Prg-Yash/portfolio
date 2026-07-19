@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Copy, Check, ArrowUpRight, Sparkles, Send, CheckCircle2, Radio } from "lucide-react";
 import { SITE_CONTENT } from "../../data/content";
 import { useSoul } from "../../context/SoulContext";
+import { SlideButton } from "../ui/SlideButton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,9 +18,10 @@ export const Stage09Legacy: React.FC = () => {
 
   const [copied, setCopied] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
+  const [resetKey, setResetKey] = useState(0);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(SITE_CONTENT.legacy.contact.email);
@@ -37,11 +39,19 @@ export const Stage09Legacy: React.FC = () => {
     }
   }, [isSubmitted]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formRef.current || isSubmitting) return;
+  const handleSlideComplete = async () => {
+    if (!formRef.current) return;
+    
+    if (!formRef.current.reportValidity()) {
+      setSubmitStatus("error");
+      setErrorMessage("Please complete all required fields.");
+      setTimeout(() => setSubmitStatus("idle"), 2500);
+      return;
+    }
 
-    setIsSubmitting(true);
+    if (submitStatus === "loading") return;
+
+    setSubmitStatus("loading");
     setErrorMessage(null);
     setCursorText("SENDING...");
 
@@ -64,10 +74,11 @@ export const Stage09Legacy: React.FC = () => {
       }
 
       // ── Crazy GSAP Form Dissolve into Cosmic Confirmation ──────────
+      setSubmitStatus("success");
+      
       const tl = gsap.timeline({
         onComplete: () => {
           setIsSubmitted(true);
-          setIsSubmitting(false);
           setCursorText(null);
         },
       });
@@ -83,13 +94,16 @@ export const Stage09Legacy: React.FC = () => {
     } catch (err: any) {
       console.error("Transmission error:", err);
       setErrorMessage(err.message || "Failed to send transmission. Please try again.");
-      setIsSubmitting(false);
+      setSubmitStatus("error");
       setCursorText(null);
+      setTimeout(() => setSubmitStatus("idle"), 3000);
     }
   };
 
   const resetForm = () => {
     setIsSubmitted(false);
+    setSubmitStatus("idle");
+    setResetKey(prev => prev + 1);
     setErrorMessage(null);
     setFormData({ name: "", email: "", phone: "", message: "" });
     if (formRef.current) {
@@ -147,7 +161,7 @@ export const Stage09Legacy: React.FC = () => {
           <div className="inline-flex items-center gap-4 mb-4">
             <span className="font-mono text-xs font-bold tracking-[0.35em] text-[#ffd890] animate-pulse flex items-center gap-2">
               <Radio className="w-3.5 h-3.5 inline text-[#ffd890]" />
-              07 / LEGACY
+              06 / LEGACY
             </span>
             <div className="h-[1px] w-16 bg-gradient-to-r from-[#ffd890] to-transparent" />
             <span className="font-mono text-xs tracking-[0.2em] uppercase text-white/35">
@@ -169,7 +183,7 @@ export const Stage09Legacy: React.FC = () => {
           <div className="lg:col-span-7 relative min-h-[520px]">
 
             {!isSubmitted ? (
-              <form ref={formRef} onSubmit={handleSubmit} className="space-y-12">
+              <form ref={formRef} onSubmit={(e) => e.preventDefault()} className="space-y-12">
 
                 {/* Field 1: Identification */}
                 <div className="form-field-anim relative group">
@@ -241,24 +255,22 @@ export const Stage09Legacy: React.FC = () => {
                       ⚠️ ERROR: {errorMessage}
                     </div>
                   )}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
+                  <div 
                     onMouseEnter={() => {
-                      setCursorText(isSubmitting ? "SENDING..." : "TRANSMIT");
-                      setCursorColor("#ffd890");
+                      if (submitStatus === "idle") {
+                        setCursorText("TRANSMIT");
+                        setCursorColor("#ffd890");
+                      }
                     }}
                     onMouseLeave={() => setCursorText(null)}
-                    className={`group/btn relative w-full sm:w-auto inline-flex items-center justify-center gap-4 rounded-full border border-[#ffd890] bg-[#ffd890] px-12 py-6 font-mono text-sm font-bold tracking-[0.3em] uppercase text-black transition-all duration-500 ${isSubmitting
-                      ? "opacity-60 cursor-not-allowed animate-pulse"
-                      : "hover:bg-white hover:border-white hover:scale-105 shadow-[0_0_40px_rgba(255,216,144,0.3)] cursor-pointer"
-                      } overflow-hidden`}
+                    className="inline-block"
                   >
-                    <span className="relative z-10">
-                      {isSubmitting ? "TRANSMITTING SIGNAL..." : "INITIATE TRANSMISSION ✦"}
-                    </span>
-                    <Send className={`relative z-10 w-4 h-4 transition-transform duration-300 ${isSubmitting ? "animate-bounce" : "group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1"}`} />
-                  </button>
+                    <SlideButton 
+                      status={submitStatus} 
+                      onComplete={handleSlideComplete} 
+                      resetKey={resetKey}
+                    />
+                  </div>
                 </div>
 
               </form>
