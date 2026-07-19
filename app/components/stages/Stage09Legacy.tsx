@@ -7,6 +7,7 @@ import { Copy, Check, ArrowUpRight, Sparkles, Send, CheckCircle2, Radio } from "
 import { SITE_CONTENT } from "../../data/content";
 import { useSoul } from "../../context/SoulContext";
 import { SlideButton } from "../ui/SlideButton";
+import { SoulFlowButton } from "../ui/SoulFlowButton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -290,12 +291,13 @@ export const Stage09Legacy: React.FC = () => {
                   SIGNAL CHARGED BY THE VOID · WE SHALL INITIATE TELEMETRY CONTACT WITHIN 24 HOURS.
                 </p>
                 <div className="pt-4">
-                  <button
+                  <SoulFlowButton
                     onClick={resetForm}
-                    className="font-mono text-xs text-white/60 hover:text-white underline underline-offset-8 tracking-[0.2em] uppercase transition-colors"
+                    variant="dark"
+                    className="mx-auto text-white/50 text-[10px] border-white/10"
                   >
-                    [ SEND ANOTHER TRANSMISSION ]
-                  </button>
+                    SEND ANOTHER TRANSMISSION
+                  </SoulFlowButton>
                 </div>
               </div>
             )}
@@ -314,32 +316,18 @@ export const Stage09Legacy: React.FC = () => {
                 Prefer direct client email? Copy my electronic address below for immediate studio outreach.
               </p>
 
-              <button
-                onClick={handleCopy}
-                onMouseEnter={() => {
-                  setCursorText("COPY");
-                  setCursorColor("#ffd890");
-                }}
-                onMouseLeave={() => setCursorText(null)}
-                className="w-full flex items-center justify-between rounded-2xl border border-white/20 bg-black/60 px-4 sm:px-6 py-3 sm:py-4 font-mono text-[11px] sm:text-sm tracking-[0.15em] text-white hover:border-[#ffd890] transition-all duration-300 group/btn cursor-pointer"
-              >
-                <span className="truncate mr-4 text-[#ffd890] font-bold">
-                  {SITE_CONTENT.legacy.contact.email}
-                </span>
-                <div className="flex items-center gap-2 text-xs tracking-[0.2em] text-white/60 group-hover/btn:text-white shrink-0">
-                  {copied ? (
-                    <>
-                      <Check className="h-4 w-4 text-[#ffc490]" />
-                      <span className="text-[#ffc490] font-bold">COPIED</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4" />
-                      <span>COPY</span>
-                    </>
-                  )}
-                </div>
-              </button>
+                <SoulFlowButton
+                  onClick={handleCopy}
+                  onMouseEnter={() => {
+                    setCursorText("COPY");
+                    setCursorColor("#ffd890");
+                  }}
+                  onMouseLeave={() => setCursorText(null)}
+                  variant="gold"
+                  className="w-full border-white/15 bg-black/40"
+                >
+                  {copied ? "COPIED ✓" : SITE_CONTENT.legacy.contact.email}
+                </SoulFlowButton>
             </div>
 
             {/* Social Links Slab */}
@@ -348,18 +336,19 @@ export const Stage09Legacy: React.FC = () => {
                 DIGITAL FOOTPRINT
               </span>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {SITE_CONTENT.legacy.socials.map((social) => (
-                  <a
+                  <SoulFlowButton
                     key={social.name}
+                    as="a"
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-5 py-3.5 font-mono text-xs tracking-[0.2em] uppercase text-white/80 hover:border-[#ffd890] hover:text-white hover:bg-white/10 transition-all duration-300 group/social"
+                    variant="gold"
+                    className="w-full border-white/10 bg-white/[0.03] hover:border-[#ffd890]/50"
                   >
-                    <span className="group-hover/social:translate-x-1 transition-transform font-semibold">{social.name}</span>
-                    <ArrowUpRight className="h-4 w-4 text-white/40 group-hover/social:text-[#ffd890] transition-colors" />
-                  </a>
+                    {social.name}
+                  </SoulFlowButton>
                 ))}
               </div>
 
@@ -379,13 +368,13 @@ export const Stage09Legacy: React.FC = () => {
             {SITE_CONTENT.legacy.copyright}
           </p>
 
-          <button
+          <SoulFlowButton
             onClick={() => scrollToStageIndex(0)}
-            className="group relative px-6 py-3 rounded-full border border-white/20 bg-white/5 flex items-center gap-3 font-mono text-[10px] tracking-[0.3em] uppercase text-white/80 hover:border-[#ffc490] hover:text-[#ffc490] hover:bg-[#ffc490]/10 transition-all duration-300 cursor-pointer shadow-lg"
+            variant="cream"
+            className="text-[10px]"
           >
-            <span>RETURN TO THE VOID</span>
-            <span className="inline-block transition-transform duration-300 group-hover:-translate-y-1 font-bold text-base">&uarr;</span>
-          </button>
+            RETURN TO THE VOID ↑
+          </SoulFlowButton>
         </footer>
 
       </div>

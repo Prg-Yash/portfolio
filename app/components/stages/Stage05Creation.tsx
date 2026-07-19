@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ExternalLink, ArrowUpRight, Sparkles, Disc, Plus, Minus } from "lucide-react";
 import { SITE_CONTENT, Project } from "../../data/content";
 import { useSoul } from "../../context/SoulContext";
+import { SoulFlowButton } from "../ui/SoulFlowButton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -112,15 +113,19 @@ export const Stage05Creation: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setActiveFilter(cat)}
-                  className={`relative py-1 transition-all duration-300 ${isActive
-                    ? "text-[#ffc490] font-bold"
-                    : "text-white/40 hover:text-white"
-                    }`}
+                  className={`group relative py-1 transition-all duration-300 overflow-hidden ${
+                    isActive
+                      ? "text-[#ffc490] font-bold tracking-[0.3em]"
+                      : "text-white/40 hover:text-white hover:tracking-[0.3em]"
+                  }`}
                 >
                   {cat}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[#ffc490] shadow-[0_0_8px_#ffc490]" />
-                  )}
+                  {/* Animated underline: always present, slides in on active/hover */}
+                  <span
+                    className={`absolute bottom-0 left-0 h-[1.5px] bg-[#ffc490] shadow-[0_0_8px_#ffc490] transition-all duration-400 ease-out ${
+                      isActive ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
                 </button>
               );
             })}
@@ -273,15 +278,16 @@ export const Stage05Creation: React.FC = () => {
                               </h5>
                             </div>
 
-                            <a
+                            <SoulFlowButton
+                              as="a"
                               href={project.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="w-full py-4 rounded-xl border border-[#ffc490]/40 bg-[#ffc490]/10 hover:bg-[#ffc490] text-[#ffc490] hover:text-black font-mono text-xs font-bold tracking-[0.25em] uppercase transition-all duration-300 flex items-center justify-center gap-3 group/btn shadow-[0_0_20px_rgba(255,196,144,0.1)] hover:shadow-[0_0_30px_rgba(255,196,144,0.4)]"
+                              variant="gold"
+                              className="w-full justify-center"
                             >
-                              <span>VISIT WEBSITE</span>
-                              <ExternalLink className="w-4 h-4 transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
-                            </a>
+                              VISIT WEBSITE
+                            </SoulFlowButton>
                           </div>
 
                         </div>
@@ -298,29 +304,21 @@ export const Stage05Creation: React.FC = () => {
         {/* ── View More / Explore Full Archive Toggle Button ─────────── */}
         {filteredProjects.length > FEATURED_LIMIT && (
           <div className="pt-16 text-center">
-            <button
+            <SoulFlowButton
               onClick={() => setShowAll(!showAll)}
               onMouseEnter={() => {
                 setCursorText(showAll ? "COLLAPSE" : "EXPAND");
                 setCursorColor("#ffc490");
               }}
               onMouseLeave={() => setCursorText(null)}
-              className="group relative inline-flex items-center gap-4 px-10 py-5 rounded-full border border-white/20 bg-white/[0.02] hover:bg-[#ffc490] hover:border-[#ffc490] hover:text-black font-mono text-xs tracking-[0.25em] uppercase text-white transition-all duration-500 shadow-[0_0_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_40px_rgba(255,196,144,0.4)] hover:scale-105"
+              variant="gold"
+              className="mx-auto"
             >
-              {showAll ? (
-                <>
-                  <Minus className="w-4 h-4 text-[#ffc490] group-hover:text-black transition-colors" />
-                  <span className="font-bold">COLLAPSE ARCHIVE [ - ]</span>
-                </>
-              ) : (
-                <>
-                  <Plus className="w-4 h-4 text-[#ffc490] group-hover:text-black transition-colors" />
-                  <span className="font-bold">
-                    EXPLORE FULL ARCHIVE [ +{filteredProjects.length - FEATURED_LIMIT} MORE EXHIBITION{filteredProjects.length - FEATURED_LIMIT > 1 ? "S" : ""} ]
-                  </span>
-                </>
-              )}
-            </button>
+              {showAll
+                ? "COLLAPSE ARCHIVE"
+                : `EXPLORE FULL ARCHIVE [ +${filteredProjects.length - FEATURED_LIMIT} ]`
+              }
+            </SoulFlowButton>
           </div>
         )}
 

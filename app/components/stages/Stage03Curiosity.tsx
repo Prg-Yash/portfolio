@@ -69,19 +69,38 @@ export const Stage03Curiosity: React.FC = () => {
                 onMouseEnter={() => { setCursorText("FILTER"); setCursorColor(catMeta.color); }}
                 onMouseLeave={() => { setCursorText(null); }}
                 className={`
-                  relative px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-full font-mono text-[10px] sm:text-[11px] tracking-[0.18em] sm:tracking-[0.25em] uppercase
-                  transition-all duration-300 cursor-pointer
-                  ${isActive
-                    ? "text-black font-bold scale-105 shadow-lg"
-                    : "border border-white/10 bg-white/4 text-white/60 hover:text-white hover:border-white/30 hover:bg-white/10"
+                  group relative px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-full font-mono text-[10px] sm:text-[11px] tracking-[0.2em] uppercase
+                  transition-all duration-300 cursor-pointer overflow-hidden
+                  ${
+                    isActive
+                      ? "text-black font-bold scale-[1.06]"
+                      : "border border-white/15 bg-white/[0.03] text-white/50 hover:text-white hover:border-white/30 hover:bg-white/[0.07] hover:scale-[1.04]"
                   }
                 `}
                 style={isActive ? {
                   background: catMeta.color,
-                  boxShadow: `0 0 28px ${catMeta.color}80, 0 0 60px ${catMeta.color}30`,
+                  boxShadow: `0 0 20px ${catMeta.color}70, 0 0 50px ${catMeta.color}25`,
                 } : {}}
               >
-                {cat}
+                {/* Scanline sweep on hover (inactive only) */}
+                {!isActive && (
+                  <span
+                    className="pointer-events-none absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{
+                      background: `linear-gradient(105deg, transparent 40%, ${catMeta.color}18 50%, transparent 60%)`,
+                      backgroundSize: "200% 100%",
+                      animation: "scanPill 0.6s ease forwards",
+                    }}
+                  />
+                )}
+                {/* Active glow ring pulse */}
+                {isActive && (
+                  <span
+                    className="pointer-events-none absolute inset-0 rounded-full animate-ping opacity-20"
+                    style={{ background: catMeta.color }}
+                  />
+                )}
+                <span className="relative z-10">{cat}</span>
               </button>
             );
           })}
