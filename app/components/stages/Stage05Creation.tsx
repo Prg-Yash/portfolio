@@ -62,13 +62,22 @@ export const Stage05Creation: React.FC = () => {
     );
   }, [displayedProjects]);
 
-  // 2. Refresh ScrollTrigger and Lenis AFTER the accordion transition (700ms) completes
+  // 2. Refresh ScrollTrigger AFTER the accordion transition (700ms) completes.
+  // IMPORTANT: We defer via requestAnimationFrame so the refresh happens AFTER
+  // the current paint cycle — prevents desync with Lenis's GSAP-driven RAF loop
+  // which would cause the intermittent scroll-stuck bug.
   useEffect(() => {
+    let rafId: number;
     const timer = setTimeout(() => {
-      ScrollTrigger.refresh();
-      window.dispatchEvent(new Event("resize"));
-    }, 750);
-    return () => clearTimeout(timer);
+      // Use rAF to ensure we're on a fresh frame, not mid-Lenis-tick
+      rafId = requestAnimationFrame(() => {
+        ScrollTrigger.refresh(true); // true = safe mode, recalculates without scroll jump
+      });
+    }, 800); // 800ms > 700ms accordion duration — fully settled
+    return () => {
+      clearTimeout(timer);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [displayedProjects, openId]);
 
   return (

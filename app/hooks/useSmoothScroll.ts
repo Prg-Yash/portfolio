@@ -55,22 +55,17 @@ export const useSmoothScroll = (mainRef: RefObject<HTMLElement | null>) => {
       });
     });
 
-    // 3. Sort and refresh ScrollTriggers after DOM and fonts settle
-    const handleRefresh = () => {
-      ScrollTrigger.sort();
-      ScrollTrigger.refresh();
-    };
-
-    window.addEventListener("load", handleRefresh);
-    const t1 = setTimeout(handleRefresh, 100);
-    const t2 = setTimeout(handleRefresh, 500);
-    const t3 = setTimeout(handleRefresh, 1500);
+    // 3. Refresh ScrollTrigger after DOM and fonts settle.
+    // Deferred via rAF so refresh never interrupts a Lenis tick in progress.
+    let raf1: number, raf2: number;
+    const t1 = setTimeout(() => { raf1 = requestAnimationFrame(() => ScrollTrigger.refresh(true)); }, 600);
+    const t2 = setTimeout(() => { raf2 = requestAnimationFrame(() => ScrollTrigger.refresh(true)); }, 1500);
 
     return () => {
-      window.removeEventListener("load", handleRefresh);
       clearTimeout(t1);
       clearTimeout(t2);
-      clearTimeout(t3);
+      if (raf1) cancelAnimationFrame(raf1);
+      if (raf2) cancelAnimationFrame(raf2);
       ScrollTrigger.getAll().forEach((st) => st.kill());
     };
   }, [isLoaded, lenis, registerScrollToStage, setActiveStageIndex, setCursorColor]);
