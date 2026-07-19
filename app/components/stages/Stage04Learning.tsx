@@ -87,7 +87,7 @@ const Card: React.FC<{ item: TimelineMilestone }> = ({ item }) => {
         borderColor: `${color}18`,
         background: "rgba(255,255,255,0.025)",
         opacity: 0,
-        transform: "translateY(20px)",
+        transform: "translateY(20px) scale(0.95)",
       }}
     >
       {/* Hover glow fill */}
@@ -148,26 +148,24 @@ const EraPanel: React.FC<{ era: MilestoneEra; items: TimelineMilestone[] }> = ({
 
   return (
     <div
-      className="era-panel flex-shrink-0 w-screen h-full flex flex-col pt-14 sm:pt-16 pb-8 sm:pb-10 px-5 sm:px-12 lg:pl-16 lg:pr-20"
+      className="era-panel w-max h-full flex flex-row flex-shrink-0"
       data-era={era}
     >
       {/* ── Era header ──────────────────────────────────────────── */}
-      <div className="era-header flex items-end justify-between mb-6 flex-shrink-0 pb-4 border-b" style={{ borderColor: `${cfg.color}12` }}>
-        {/* Left: era identity */}
+      <div className="era-header flex-shrink-0 w-screen md:w-[60vw] lg:w-[45vw] h-full flex flex-col justify-center px-6 sm:px-16 lg:px-24 relative border-r border-white/5">
         <div>
-          <div className="flex items-center gap-3 mb-2">
-            <span className="font-mono text-[9px] tracking-[0.5em] uppercase font-bold" style={{ color: cfg.color }}>
+          <div className="flex items-center gap-3 mb-3">
+            <span className="font-mono text-[10px] tracking-[0.5em] uppercase font-bold" style={{ color: cfg.color }}>
               ERA {cfg.number}
             </span>
-            <div className="h-[1px] w-8 opacity-30" style={{ background: cfg.color }} />
-            <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/25">{cfg.years}</span>
+            <div className="h-[1px] w-12 opacity-30" style={{ background: cfg.color }} />
+            <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/25">{cfg.years}</span>
           </div>
 
-          {/* Era title */}
           <h3
-            className="era-title font-serif-italic leading-none"
+            className="era-title font-serif-italic leading-none mb-6"
             style={{
-              fontSize: "clamp(40px, 5.5vw, 72px)",
+              fontSize: "clamp(48px, 8vw, 96px)",
               color: "#f5f0e8",
               letterSpacing: "-0.03em",
             }}
@@ -175,43 +173,41 @@ const EraPanel: React.FC<{ era: MilestoneEra; items: TimelineMilestone[] }> = ({
             {cfg.title}
           </h3>
 
-          {/* Accent line */}
           <div
-            className="era-accent-line mt-3 h-[1.5px] origin-left"
+            className="era-accent-line h-[1.5px] origin-left mb-8"
             style={{
               background: `linear-gradient(90deg, ${cfg.color}, ${cfg.color}00)`,
-              width: "200px",
+              width: "100%",
+              maxWidth: "300px",
               transform: "scaleX(0)",
             }}
           />
-        </div>
 
-        {/* Right: subtitle + count */}
-        <div className="text-right flex-shrink-0 ml-8">
-          <p className="era-subtitle font-mono text-[10px] tracking-[0.15em] text-white/35 leading-relaxed mb-3">
+          <p className="era-subtitle font-mono text-xs tracking-[0.15em] text-white/40 leading-relaxed mb-6 max-w-sm">
             {cfg.subtitle}
           </p>
-          <div className="flex items-baseline gap-1.5 justify-end">
+
+          <div className="flex items-baseline gap-2">
             <span
-              className="font-serif-italic text-4xl leading-none"
+              className="font-serif-italic text-5xl leading-none"
               style={{ color: `${cfg.color}50` }}
             >
               {String(items.length).padStart(2, "0")}
             </span>
-            <span className="font-mono text-[8px] tracking-[0.35em] uppercase text-white/20">
+            <span className="font-mono text-[9px] tracking-[0.35em] uppercase text-white/20">
               MILESTONES
             </span>
           </div>
         </div>
       </div>
 
-      {/* ── Milestone card grid ──────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 pb-4">
-          {items.map((item) => (
-            <Card key={item.year + item.title} item={item} />
-          ))}
-        </div>
+      {/* ── Milestone cards in a continuous 2-row grid ──────────────────────────────────── */}
+      <div className="grid grid-rows-2 grid-flow-col content-center items-center gap-4 sm:gap-6 px-6 sm:px-12 h-full py-16">
+        {items.map((item) => (
+          <div key={item.year + item.title} className="w-[85vw] sm:w-[420px]">
+            <Card item={item} />
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -237,6 +233,14 @@ export const Stage04Learning: React.FC = () => {
     if (!section || !track) return;
 
     const getScrollDist = () => track.scrollWidth - window.innerWidth;
+    
+    // Reduce the amount of vertical scrolling required to traverse the timeline
+    const getScrollDuration = () => {
+      const dist = getScrollDist();
+      const isMobile = window.innerWidth < 768;
+      // On mobile, timeline flies by 2x faster. On desktop, 1.4x faster.
+      return dist * (isMobile ? 0.5 : 0.7);
+    };
 
     const mainTween = gsap.to(track, {
       x: () => -getScrollDist(),
@@ -244,9 +248,9 @@ export const Stage04Learning: React.FC = () => {
       scrollTrigger: {
         trigger: section,
         pin: true,
-        scrub: 1.4,
+        scrub: 1.0,
         start: "top top",
-        end: () => "+=" + getScrollDist(),
+        end: () => "+=" + getScrollDuration(),
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           if (progressRef.current) {
@@ -259,7 +263,6 @@ export const Stage04Learning: React.FC = () => {
     // Per-era panel animations
     track.querySelectorAll<HTMLDivElement>(".era-panel").forEach((panel) => {
       const era = panel.dataset.era as MilestoneEra;
-      const cfg = ERA_CONFIG[era];
       const title = panel.querySelector(".era-title");
       const accent = panel.querySelector(".era-accent-line");
       const subtitle = panel.querySelector(".era-subtitle");
@@ -278,8 +281,8 @@ export const Stage04Learning: React.FC = () => {
 
       if (header) {
         tl.fromTo(header,
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0
+          { opacity: 0, x: 30 },
+          { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, 0
         );
       }
       if (title) {
@@ -303,8 +306,8 @@ export const Stage04Learning: React.FC = () => {
 
       cards.forEach((card, i) => {
         tl.to(card,
-          { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" },
-          0.3 + i * 0.04
+          { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "power3.out" },
+          0.2 + i * 0.08
         );
       });
     });
@@ -316,21 +319,19 @@ export const Stage04Learning: React.FC = () => {
     <section id="stage-3" className="relative w-full">
       <div
         ref={sectionRef}
-        className="relative w-full overflow-hidden"
-        style={{ height: "100vh" }}
+        className="relative w-full overflow-hidden h-[100vh]"
       >
-        {/* ── Horizontal track ────────────────────────────────── */}
+        {/* ── Continuous Horizontal Filmstrip ──────────────── */}
         <div
           ref={trackRef}
-          className="absolute top-0 left-0 h-full flex will-change-transform"
-          style={{ width: `${ERAS.length * 100}vw` }}
+          className="absolute top-0 left-0 h-full flex flex-row will-change-transform w-max"
         >
           {ERAS.map((era) => (
             <EraPanel key={era} era={era} items={byEra[era]} />
           ))}
         </div>
 
-        {/* ── Thin progress bar at very bottom (spans full screen width, no AI gradients) ── */}
+        {/* ── Thin progress bar (Global) ── */}
         <div className="absolute bottom-0 left-0 right-0 z-30 h-[2px] bg-white/5">
           <div
             ref={progressRef}
@@ -342,7 +343,7 @@ export const Stage04Learning: React.FC = () => {
           />
         </div>
 
-        {/* ── Era dots (centered at bottom to avoid overlapping left/right indicators) ── */}
+        {/* ── Era dots (Global) ── */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none flex items-center gap-6">
           {ERAS.map((era) => {
             const cfg = ERA_CONFIG[era];

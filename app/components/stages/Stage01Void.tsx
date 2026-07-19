@@ -82,7 +82,7 @@ export const Stage01Void: React.FC = () => {
     <section
       ref={sectionRef}
       id="stage-0"
-      className="relative flex min-h-screen w-full flex-col z-20 overflow-hidden perspective-[1200px]"
+      className="relative flex min-h-screen min-h-[100dvh] w-full flex-col justify-between z-20 overflow-hidden perspective-[1200px]"
     >
       {/* Background Banner Image */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none animate-camera-breathe-bg">
@@ -110,12 +110,9 @@ export const Stage01Void: React.FC = () => {
         <span>A HUSTLER</span>
       </div>
 
-      {/* ROW 2: Flexible spacer so content anchors beautifully */}
-      <div className="flex-1" />
-
-      {/* ROW 3: Hero content — sits in the lower-center of the viewport */}
+      {/* ROW 3: Hero content — sits in the center of the viewport */}
       <div
-        className="relative z-30 flex flex-col items-start px-5 sm:px-12 lg:px-20 pb-8 sm:pb-16 animate-camera-breathe-content"
+        className="relative z-30 flex flex-col items-start px-5 sm:px-12 lg:px-20 animate-camera-breathe-content my-auto"
       >
         {/* Label */}
         <div className="mb-3 sm:mb-5 font-mono text-xs sm:text-sm font-semibold tracking-[0.35em] text-[#ffc490] uppercase flex items-center gap-3">
@@ -128,11 +125,15 @@ export const Stage01Void: React.FC = () => {
           ref={titleRef}
           className="font-serif-italic uppercase leading-[0.88] text-[#f5f0e8] select-none cursor-default mb-5 sm:mb-8 drop-shadow-[0_0_60px_rgba(0,0,0,0.9)]"
           style={{
-            fontSize: "clamp(3.2rem, 14vw, 10rem)",
+            fontSize: "clamp(4.5rem, 18vw, 10rem)",
             transformStyle: "preserve-3d",
           }}
         >
-          {renderSplitText("I AM ETERNAL.")}
+          <div className="block sm:inline-block mb-3 sm:mb-0 sm:mr-6">{renderSplitText("I")}</div>
+          <div className="block sm:inline-block mb-3 sm:mb-0 sm:mr-6 -ml-3 sm:ml-0">{renderSplitText("AM")}</div>
+          <div className="block sm:inline-block text-[#ffc490] sm:text-[#f5f0e8] sm:hover:text-[#ffc490] transition-colors duration-500 -ml-3 sm:ml-0">
+            {renderSplitText("ETERNAL.")}
+          </div>
         </h1>
 
         {/* Rotating Role */}
@@ -162,7 +163,7 @@ export const Stage01Void: React.FC = () => {
         ref={sublineRef}
         className="relative z-30 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-5 sm:gap-8 border-t border-white/10 px-5 sm:px-12 lg:px-20 pt-5 sm:pt-8 pb-8 sm:pb-10"
       >
-        <div className="max-w-sm sm:max-w-md xl:max-w-lg">
+        <div className="max-w-sm sm:max-w-md xl:max-w-lg self-end sm:self-auto text-right sm:text-left">
           <p className="font-mono text-[10px] sm:text-sm leading-relaxed tracking-[0.12em] sm:tracking-[0.15em] text-white/70 uppercase">
             &ldquo;The soul remembers what the mind forgets. I simply build those memories.&rdquo;
           </p>
@@ -173,7 +174,7 @@ export const Stage01Void: React.FC = () => {
             const el = document.getElementById("stage-1");
             if (el) el.scrollIntoView({ behavior: "smooth" });
           }}
-          className="flex items-center gap-4 group cursor-pointer select-none"
+          className="flex items-center gap-4 group cursor-pointer select-none self-end sm:self-auto"
         >
           <div className="flex flex-col items-end gap-1">
             <span className="font-mono text-xs sm:text-sm tracking-[0.3em] text-white/90 font-medium uppercase group-hover:text-[#ffc490] transition-colors duration-300">

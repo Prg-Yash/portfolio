@@ -58,7 +58,7 @@ export const Stage03Curiosity: React.FC = () => {
         </div>
 
         {/* ── Category Filter Pills ─────────────────────────── */}
-        <div className="mb-8 flex flex-wrap items-center gap-2 sm:gap-3">
+        <div className="mb-8 hidden md:flex flex-wrap items-center gap-2 sm:gap-3">
           {CATEGORIES.map((cat) => {
             const catMeta = CATEGORY_META[cat] || CATEGORY_META["ALL"];
             const isActive = selectedCategory === cat;

@@ -2,13 +2,14 @@
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Skill, SITE_CONTENT } from "../../data/content";
+import { MobileSkillTree } from "./MobileSkillTree";
 
 interface ConstellationSkillMapProps {
   selectedCategory?: string;
   className?: string;
 }
 
-interface StarNode {
+export interface StarNode {
   id: string;
   name: string;
   x: number;
@@ -28,7 +29,7 @@ interface StarNode {
 
 // All 12 skill nodes with their metadata
 // All 29 skill nodes with their metadata across the 5 categories
-const ALL_NODES: Omit<StarNode, "x" | "y" | "opacity" | "targetOpacity">[] = [
+export const ALL_NODES: Omit<StarNode, "x" | "y" | "opacity" | "targetOpacity">[] = [
   // ── Frontend ──────────────────────────────────────────────────────────
   { id: "nextjs",      name: "NEXT.JS",       baseAngle: 0, orbitRadius: 0, orbitSpeed: 0.0015, size: 13, category: "Frontend", level: 95, description: "Enterprise web architecture, full-stack routing, server-side rendering, and high-performance production web applications." },
   { id: "react",       name: "REACT.JS",      baseAngle: 0, orbitRadius: 0, orbitSpeed: 0.0018, size: 13, category: "Frontend", level: 95, description: "Modern reactive user interfaces, component-driven architecture, state synchronization, and seamless client experiences." },
@@ -69,7 +70,7 @@ const ALL_NODES: Omit<StarNode, "x" | "y" | "opacity" | "targetOpacity">[] = [
   { id: "canva",       name: "CANVA",         baseAngle: 0, orbitRadius: 0, orbitSpeed: 0.0019, size: 12, category: "Tools", level: 90, description: "Rapid visual graphic production, brand asset generation, marketing collateral design, and intuitive digital layouts." },
 ];
 
-const LINKS = [
+export const LINKS = [
   // Frontend connections
   ["nextjs", "react"], ["nextjs", "ts"], ["nextjs", "tailwind"], ["react", "js"],
   ["react", "reactnative"], ["react", "html"], ["html", "tailwind"], ["wordpress", "php"], ["reactnative", "flutter"],
@@ -86,7 +87,7 @@ const LINKS = [
   ["git", "github"], ["github", "nextjs"], ["figma", "tailwind"], ["figma", "canva"], ["canva", "wordpress"],
 ];
 
-const CATEGORY_COLORS: Record<string, string> = {
+export const CATEGORY_COLORS: Record<string, string> = {
   "Frontend":         "#ffc490", // Luminous Gold
   "Backend":          "#90d5ff", // Celestial Blue
   "AI & Automations": "#c8a0ff", // Ethereal Purple
@@ -594,76 +595,7 @@ export const ConstellationSkillMap: React.FC<ConstellationSkillMapProps> = ({
   const mobileCategories = ["Frontend", "Backend", "AI & Automations", "Databases", "Tools"];
 
   if (isMobile) {
-    return (
-      <div className={`relative w-full ${className}`}>
-        {selectedCategory === "ALL" ? (
-          // Show all categories grouped
-          <div className="space-y-8">
-            {mobileCategories.map((cat) => {
-              const catNodes = ALL_NODES.filter((n) => n.category === cat);
-              const color = CATEGORY_COLORS[cat] ?? "#ffc490";
-              return (
-                <div key={cat}>
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-2 h-2 rounded-full" style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
-                    <span className="font-mono text-[10px] tracking-[0.3em] uppercase font-bold" style={{ color }}>
-                      {cat}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {catNodes.map((node) => (
-                      <div
-                        key={node.id}
-                        className="rounded-full border px-3 py-1.5 font-mono text-[10px] tracking-[0.15em] uppercase text-white/80"
-                        style={{
-                          borderColor: `${color}40`,
-                          background: `${color}08`,
-                        }}
-                      >
-                        {node.name}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          // Show single category as a grid with proficiency bars
-          <div className="space-y-3">
-            {mobileNodes.map((node) => {
-              const color = CATEGORY_COLORS[node.category] ?? "#ffc490";
-              return (
-                <div
-                  key={node.id}
-                  className="rounded-xl border p-4"
-                  style={{ borderColor: `${color}25`, background: `${color}06` }}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-mono text-xs tracking-[0.15em] text-white font-semibold uppercase">
-                      {node.name}
-                    </span>
-                    <span className="font-mono text-[10px] tracking-[0.2em]" style={{ color }}>
-                      {node.level}%
-                    </span>
-                  </div>
-                  <div className="h-1 w-full rounded-full bg-white/8 overflow-hidden">
-                    <div
-                      className="h-full rounded-full"
-                      style={{
-                        width: `${node.level}%`,
-                        background: `linear-gradient(90deg, ${color}, ${color}80)`,
-                        boxShadow: `0 0 8px ${color}60`,
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    );
+    return <MobileSkillTree selectedCategory={selectedCategory} className={className} />;
   }
 
   return (
