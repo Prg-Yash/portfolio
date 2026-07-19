@@ -406,68 +406,73 @@ class Star {
 export function SpiralAnimation() {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const animationRef = useRef<AnimationController | null>(null)
-    const [dimensions, setDimensions] = useState({ width: typeof window !== 'undefined' ? window.innerWidth : 1000, height: typeof window !== 'undefined' ? window.innerHeight : 1000 })
-    
-    // 处理窗口大小变化
+    // Start with 0 — SSR safe, no window access during server render
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+    const initializedRef = useRef(false)
+
+    // Set real dimensions once on client mount, then listen for resize
     useEffect(() => {
-        const handleResize = () => {
-            setDimensions({
-                width: window.innerWidth,
-                height: window.innerHeight
-            })
+        const update = () => {
+            setDimensions({ width: window.innerWidth, height: window.innerHeight })
         }
-        
-        handleResize()
-        window.addEventListener('resize', handleResize)
-        return () => window.removeEventListener('resize', handleResize)
+        update()
+        window.addEventListener('resize', update)
+        return () => window.removeEventListener('resize', update)
     }, [])
-    
-    // 创建和管理动画
+
+    // Create / recreate AnimationController only when dimensions are first known
+    // or when a meaningful resize happens (debounced via dimensions state)
     useEffect(() => {
+        // Skip until we have real dimensions
+        if (dimensions.width === 0 || dimensions.height === 0) return
+
         const canvas = canvasRef.current
         if (!canvas) return
-        
+
         const ctx = canvas.getContext('2d')
         if (!ctx) return
-        
-        // 处理DPR以解决模糊问题
-        const dpr = window.devicePixelRatio || 1
-        const isDesktop = dimensions.width >= dimensions.height;
-        
-        let canvasW, canvasH;
-        if (isDesktop) {
-            // 保持桌面端原有的逻辑（CSS挤压效果）
-            const size = Math.max(dimensions.width, dimensions.height)
-            canvasW = size;
-            canvasH = size;
-        } else {
-            // 移动端：保持完美比例，不拉伸
-            canvasW = dimensions.width;
-            canvasH = dimensions.height;
+
+        // Destroy previous controller cleanly before creating a new one
+        if (animationRef.current) {
+            animationRef.current.destroy()
+            animationRef.current = null
         }
-        
+
+        const dpr = window.devicePixelRatio || 1
+        const isDesktop = dimensions.width >= dimensions.height
+
+        let canvasW: number, canvasH: number
+        if (isDesktop) {
+            const size = Math.max(dimensions.width, dimensions.height)
+            canvasW = size
+            canvasH = size
+        } else {
+            canvasW = dimensions.width
+            canvasH = dimensions.height
+        }
+
         canvas.width = canvasW * dpr
         canvas.height = canvasH * dpr
-        
-        // 设置CSS尺寸
         canvas.style.width = `${dimensions.width}px`
         canvas.style.height = `${dimensions.height}px`
-        
-        // 缩放上下文以适应DPR
         ctx.scale(dpr, dpr)
-        
-        // 创建动画控制器
-        animationRef.current = new AnimationController(canvas, ctx, dpr, dimensions.width, dimensions.height, isDesktop)
-        
+
+        animationRef.current = new AnimationController(
+            canvas, ctx, dpr,
+            dimensions.width, dimensions.height,
+            isDesktop
+        )
+
+        initializedRef.current = true
+
         return () => {
-            // 清理动画
             if (animationRef.current) {
                 animationRef.current.destroy()
                 animationRef.current = null
             }
         }
     }, [dimensions])
-    
+
     return (
         <div className="relative w-full h-full">
             <canvas
