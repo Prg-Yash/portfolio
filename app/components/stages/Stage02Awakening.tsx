@@ -34,9 +34,9 @@ export const Stage02Awakening: React.FC = () => {
       scrollTrigger: {
         trigger: container,
         start: "top top",
-        end: isMobile ? "+=100%" : "+=280%",
+        end: isMobile ? "+=15%" : "+=280%",
         pin: true,
-        pinSpacing: true,
+        pinSpacing: isMobile ? false : true,
         scrub: isMobile ? 0.3 : 1.2,
         invalidateOnRefresh: true,
       },
@@ -110,7 +110,7 @@ export const Stage02Awakening: React.FC = () => {
       <section
         ref={containerRef}
         id="stage-1"
-      className="relative flex h-[100vh] w-full flex-col items-center justify-start pt-24 sm:pt-32 z-20 overflow-hidden perspective-[1000px]"
+      className="relative flex h-auto min-h-0 sm:min-h-[100vh] w-full flex-col items-center justify-center pt-24 pb-6 sm:pt-32 sm:pb-0 z-20 overflow-hidden perspective-[1000px]"
     >
       {/* Cinematic Volumetric Light Dawn Aura (No Blurry Shards!) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -228,7 +228,7 @@ export const Stage02Awakening: React.FC = () => {
       </section>
 
       {/* Standalone Full-Width Alive Stardust River (Outside Pinned Section to prevent GSAP overlap & lag!) */}
-      <div className="relative z-10 w-full pt-0 pb-0 sm:pb-2 bg-transparent mt-12 sm:-mt-10">
+      <div className="relative z-10 w-full pt-0 pb-0 sm:pb-2 bg-transparent -mt-10 sm:-mt-10">
         <StardustRiver />
       </div>
     </>

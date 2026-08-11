@@ -15,15 +15,19 @@ import { FilmGrain } from "./components/ui/FilmGrain";
 // 3D Canvas Engine
 // import { SoulCanvas } from "./components/canvas/SoulCanvas";
 
+import dynamic from "next/dynamic";
+
 // The 9 Sequential Stages
 import { Stage01Void } from "./components/stages/Stage01Void";
-import { Stage02Awakening } from "./components/stages/Stage02Awakening";
-import { Stage03Curiosity } from "./components/stages/Stage03Curiosity";
-import { Stage04Learning } from "./components/stages/Stage04Learning";
-import { Stage05Creation } from "./components/stages/Stage05Creation";
 
-import { Stage09Legacy } from "./components/stages/Stage09Legacy";
-import { CosmicFooter } from "./components/ui/CosmicFooter";
+// Dynamically import off-screen components for performance
+const Stage02Awakening = dynamic(() => import("./components/stages/Stage02Awakening").then((mod) => mod.Stage02Awakening));
+const Stage03Curiosity = dynamic(() => import("./components/stages/Stage03Curiosity").then((mod) => mod.Stage03Curiosity));
+const Stage04Learning = dynamic(() => import("./components/stages/Stage04Learning").then((mod) => mod.Stage04Learning));
+const Stage05Creation = dynamic(() => import("./components/stages/Stage05Creation").then((mod) => mod.Stage05Creation));
+const Stage09Legacy = dynamic(() => import("./components/stages/Stage09Legacy").then((mod) => mod.Stage09Legacy));
+
+const CosmicFooter = dynamic(() => import("./components/ui/CosmicFooter").then((mod) => mod.CosmicFooter));
 
 export default function Home() {
   const mainRef = useRef<HTMLElement | null>(null);

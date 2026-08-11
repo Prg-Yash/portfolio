@@ -33,23 +33,23 @@ export const Stage01Void: React.FC = () => {
       letters,
       {
         opacity: 0,
-        rotateX: -90,
-        rotateY: 25,
-        z: -180,
-        scale: 1.3,
-        filter: "blur(12px)",
+        y: 120,
+        rotateX: -80,
+        scale: 0.5,
       },
       {
         opacity: 1,
+        y: 0,
         rotateX: 0,
-        rotateY: 0,
-        z: 0,
         scale: 1,
-        filter: "blur(0px)",
-        stagger: 0.045,
-        duration: 1.8,
+        stagger: {
+          amount: 1.2,
+          from: "center",
+          ease: "power1.inOut",
+        },
+        duration: 2.2,
         ease: "expo.out",
-        delay: 0.2,
+        delay: 0.1,
       }
     );
   }, [isLoaded]);
@@ -85,12 +85,14 @@ export const Stage01Void: React.FC = () => {
       className="relative flex min-h-screen min-h-[100dvh] w-full flex-col justify-between z-20 overflow-hidden perspective-[1200px]"
     >
       {/* Background Banner Image */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none animate-camera-breathe-bg">
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <Image
           src="/images/banner.webp"
           alt="Yash Portfolio Hero Banner"
           fill
           priority
+          sizes="100vw"
+          quality={85}
           className="object-cover object-center opacity-75 scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#1d1d1d]/60 via-transparent to-[#1d1d1d]" />
@@ -100,7 +102,7 @@ export const Stage01Void: React.FC = () => {
 
       {/* ── Layout: Three-row flex-col ── */}
       {/* ROW 1: Top status bar */}
-      <div className="relative z-30 flex items-center gap-3 px-5 sm:px-12 lg:px-20 pt-16 sm:pt-8 pb-4 sm:pb-6 border-b border-white/10 font-mono text-[10px] sm:text-xs tracking-[0.25em] uppercase text-white/70 select-none">
+      <div className="relative z-30 flex items-center gap-3 pl-[85px] pr-5 sm:pl-[140px] sm:pr-12 lg:pl-[160px] lg:pr-20 pt-16 sm:pt-8 pb-4 sm:pb-6 border-b border-white/10 font-mono text-[10px] sm:text-xs tracking-[0.25em] uppercase text-white/70 select-none">
         <span className="relative flex h-2 w-2 shrink-0">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ffc490] opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ffc490]"></span>
@@ -112,7 +114,7 @@ export const Stage01Void: React.FC = () => {
 
       {/* ROW 3: Hero content — sits in the center of the viewport */}
       <div
-        className="relative z-30 flex flex-col items-start px-5 sm:px-12 lg:px-20 animate-camera-breathe-content my-auto"
+        className="relative z-30 flex flex-col items-start px-5 sm:px-12 lg:px-20 my-auto"
       >
         {/* Label */}
         <div className="mb-3 sm:mb-5 font-mono text-xs sm:text-sm font-semibold tracking-[0.35em] text-[#ffc490] uppercase flex items-center gap-3">

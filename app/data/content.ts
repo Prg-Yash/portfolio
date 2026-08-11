@@ -61,9 +61,9 @@ export interface StageConfig {
 
 export const SITE_CONTENT = {
   meta: {
-    title: "The Journey of the Soul — Portfolio",
-    description: "An immersive scroll-driven narrative experience exploring the metaphorical evolution of a creative developer's soul.",
-    author: "Creative Technologist",
+    title: "Yash Nimse | Portfolio",
+    description: "Portfolio",
+    author: "Yash Nimse",
   },
 
   stages: [
@@ -380,7 +380,7 @@ export const SITE_CONTENT = {
     // ── PERSONAL PROJECTS & SAAS ─────────────────────────────────────────────
     {
       id: "gten",
-      title: "Gten — Fund Flow Intelligence",
+      title: "Gten",
       subtitle: "AI/ML Financial Forensics & Fraud Detection",
       description: "An advanced financial forensics platform utilizing AI/ML models for real-time fund flow intelligence and anomaly detection. Developed during the prestigious national Idea 2.0 Hackathon organized by Union Bank of India.",
       tags: ["REACT.JS", "PRISMA", "POSTGRESQL", "NEO4J", "PYTHON", "FASTAPI", "SHAP", "GEMINI", "RESEND"],
