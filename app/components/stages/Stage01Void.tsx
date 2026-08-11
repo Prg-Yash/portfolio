@@ -23,33 +23,28 @@ export const Stage01Void: React.FC = () => {
 
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
 
-  // 1. Initial Hero 3D Character Reveal on Load
+  // 1. Initial Hero Text One-Time Morph Reveal on Load
   useEffect(() => {
     const title = titleRef.current;
     if (!title || !isLoaded) return;
 
-    const letters = title.querySelectorAll(".hero-char");
+    // One-time smooth liquid blur & threshold morph entrance
     gsap.fromTo(
-      letters,
+      title,
       {
         opacity: 0,
-        y: 120,
-        rotateX: -80,
-        scale: 0.5,
+        filter: "blur(20px) contrast(160%)",
+        y: 25,
+        scale: 0.94,
       },
       {
         opacity: 1,
+        filter: "blur(0px) contrast(100%)",
         y: 0,
-        rotateX: 0,
         scale: 1,
-        stagger: {
-          amount: 1.2,
-          from: "center",
-          ease: "power1.inOut",
-        },
-        duration: 2.2,
-        ease: "expo.out",
-        delay: 0.1,
+        duration: 1.6,
+        ease: "power3.out",
+        delay: 0.15,
       }
     );
   }, [isLoaded]);
@@ -65,25 +60,28 @@ export const Stage01Void: React.FC = () => {
     return () => clearInterval(interval);
   }, [isLoaded]);
 
-  // Helper to split text into 3D animated character spans
-  const renderSplitText = (text: string, className: string = "hero-char") => {
-    return text.split("").map((char, idx) => (
-      <span
-        key={idx}
-        className={`${className} inline-block transition-colors duration-300 hover:text-[#ffc490] select-none`}
-        style={{ transformStyle: "preserve-3d" }}
-      >
-        {char === " " ? "\u00A0" : char}
-      </span>
-    ));
-  };
-
   return (
     <section
       ref={sectionRef}
       id="stage-0"
       className="relative flex min-h-screen min-h-[100dvh] w-full flex-col justify-between z-20 overflow-hidden perspective-[1200px]"
     >
+      {/* SVG Threshold Morphing Filter */}
+      <svg className="fixed h-0 w-0 pointer-events-none opacity-0" aria-hidden="true">
+        <defs>
+          <filter id="morph-threshold">
+            <feColorMatrix
+              in="SourceGraphic"
+              type="matrix"
+              values="1 0 0 0 0
+                      0 1 0 0 0
+                      0 0 1 0 0
+                      0 0 0 255 -140"
+            />
+          </filter>
+        </defs>
+      </svg>
+
       {/* Background Banner Image */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <Image
@@ -122,20 +120,19 @@ export const Stage01Void: React.FC = () => {
           THE ORIGIN
         </div>
 
-        {/* Massive Hero Title */}
+        {/* Massive Hero Title - One-Time Morphing Entrance */}
         <h1
           ref={titleRef}
-          className="font-serif-italic uppercase leading-[0.88] text-[#f5f0e8] select-none cursor-default mb-5 sm:mb-8 drop-shadow-[0_0_60px_rgba(0,0,0,0.9)]"
+          className="font-serif-italic uppercase leading-[0.88] text-[#f5f0e8] select-none cursor-default mb-5 sm:mb-8 drop-shadow-[0_0_60px_rgba(0,0,0,0.9)] opacity-0 will-change-transform"
           style={{
             fontSize: "clamp(4.5rem, 18vw, 10rem)",
-            transformStyle: "preserve-3d",
           }}
         >
-          <div className="block sm:inline-block mb-3 sm:mb-0 sm:mr-6">{renderSplitText("I")}</div>
-          <div className="block sm:inline-block mb-3 sm:mb-0 sm:mr-6 -ml-3 sm:ml-0">{renderSplitText("AM")}</div>
-          <div className="block sm:inline-block text-[#ffc490] sm:text-[#f5f0e8] sm:hover:text-[#ffc490] transition-colors duration-500 -ml-3 sm:ml-0">
-            {renderSplitText("ETERNAL.")}
-          </div>
+          <span className="inline-block mr-4 sm:mr-6">I</span>
+          <span className="inline-block mr-4 sm:mr-6">AM</span>
+          <span className="inline-block text-[#ffc490] hover:text-[#ffc490] transition-colors duration-500">
+            ETERNAL.
+          </span>
         </h1>
 
         {/* Rotating Role */}
