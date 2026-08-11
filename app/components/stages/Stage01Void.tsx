@@ -6,6 +6,8 @@ import gsap from "gsap";
 import { useSoul } from "../../context/SoulContext";
 import { HyperText } from "../ui/HyperText";
 
+import { BlurText } from "../ui/BlurText";
+
 const ROLES = [
   "SOFTWARE DEVELOPER",
   "A FOUNDER",
@@ -16,40 +18,13 @@ const ROLES = [
 
 export const Stage01Void: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement | null>(null);
-  const titleRef = useRef<HTMLHeadingElement | null>(null);
   const roleRef = useRef<HTMLDivElement | null>(null);
   const sublineRef = useRef<HTMLDivElement | null>(null);
   const { isLoaded } = useSoul();
 
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
 
-  // 1. Initial Hero Text One-Time Morph Reveal on Load
-  useEffect(() => {
-    const title = titleRef.current;
-    if (!title || !isLoaded) return;
-
-    // One-time smooth liquid blur & threshold morph entrance
-    gsap.fromTo(
-      title,
-      {
-        opacity: 0,
-        filter: "blur(20px) contrast(160%)",
-        y: 25,
-        scale: 0.94,
-      },
-      {
-        opacity: 1,
-        filter: "blur(0px) contrast(100%)",
-        y: 0,
-        scale: 1,
-        duration: 1.6,
-        ease: "power3.out",
-        delay: 0.15,
-      }
-    );
-  }, [isLoaded]);
-
-  // 2. Magic UI HyperText Scramble Rotator
+  // 1. Magic UI HyperText Scramble Rotator
   useEffect(() => {
     if (!isLoaded) return;
 
@@ -66,22 +41,6 @@ export const Stage01Void: React.FC = () => {
       id="stage-0"
       className="relative flex min-h-screen min-h-[100dvh] w-full flex-col justify-between z-20 overflow-hidden perspective-[1200px]"
     >
-      {/* SVG Threshold Morphing Filter */}
-      <svg className="fixed h-0 w-0 pointer-events-none opacity-0" aria-hidden="true">
-        <defs>
-          <filter id="morph-threshold">
-            <feColorMatrix
-              in="SourceGraphic"
-              type="matrix"
-              values="1 0 0 0 0
-                      0 1 0 0 0
-                      0 0 1 0 0
-                      0 0 0 255 -140"
-            />
-          </filter>
-        </defs>
-      </svg>
-
       {/* Background Banner Image */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <Image
@@ -120,18 +79,28 @@ export const Stage01Void: React.FC = () => {
           THE ORIGIN
         </div>
 
-        {/* Massive Hero Title - One-Time Morphing Entrance */}
+        {/* Massive Hero Title with Framer Motion BlurText */}
         <h1
-          ref={titleRef}
-          className="font-serif-italic uppercase leading-[0.88] text-[#f5f0e8] select-none cursor-default mb-5 sm:mb-8 drop-shadow-[0_0_60px_rgba(0,0,0,0.9)] opacity-0 will-change-transform"
+          className="font-serif-italic uppercase leading-[0.88] text-[#f5f0e8] select-none cursor-default mb-5 sm:mb-8 drop-shadow-[0_0_60px_rgba(0,0,0,0.9)]"
           style={{
             fontSize: "clamp(4.5rem, 18vw, 10rem)",
           }}
         >
-          <span className="inline-block mr-4 sm:mr-6">I</span>
-          <span className="inline-block mr-4 sm:mr-6">AM</span>
-          <span className="inline-block text-[#ffc490] hover:text-[#ffc490] transition-colors duration-500">
-            ETERNAL.
+          <span className="inline-flex flex-wrap items-center gap-x-4 sm:gap-x-8">
+            <BlurText
+              text="I AM"
+              delay={140}
+              animateBy="words"
+              direction="top"
+              className="text-[#f5f0e8]"
+            />
+            <BlurText
+              text="ETERNAL."
+              delay={100}
+              animateBy="letters"
+              direction="top"
+              className="text-[#ffc490]"
+            />
           </span>
         </h1>
 
@@ -163,9 +132,13 @@ export const Stage01Void: React.FC = () => {
         className="relative z-30 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-5 sm:gap-8 border-t border-white/10 px-5 sm:px-12 lg:px-20 pt-5 sm:pt-8 pb-8 sm:pb-10"
       >
         <div className="max-w-sm sm:max-w-md xl:max-w-lg self-end sm:self-auto text-right sm:text-left">
-          <p className="font-mono text-[10px] sm:text-sm leading-relaxed tracking-[0.12em] sm:tracking-[0.15em] text-white/70 uppercase">
-            &ldquo;The soul remembers what the mind forgets. I simply build those memories.&rdquo;
-          </p>
+          <BlurText
+            text="“The soul remembers what the mind forgets. I simply build those memories.”"
+            delay={60}
+            animateBy="words"
+            direction="bottom"
+            className="font-mono text-[10px] sm:text-sm leading-relaxed tracking-[0.12em] sm:tracking-[0.15em] text-white/70 uppercase"
+          />
         </div>
 
         <div
