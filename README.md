@@ -1,4 +1,4 @@
-# "The Journey of the Soul" — Award-Winning Interactive Portfolio
+# "The Journey of the Soul" — YASH NIMSE PORTFOLIO
 
 An Awwwards/FWA-tier immersive, scroll-driven portfolio website built on **Next.js 16 (React 19)**, **Tailwind CSS v4**, **GSAP 3 (ScrollTrigger & Timelines)**, **Lenis Smooth Scroll**, and **Three.js**.
 
